@@ -1,5 +1,6 @@
 # Nanopolysaccharide-Builder
-Nanopolysaccharide Builder (NPB) is a Python-based package that enables the automatic generation of nanopolysaccharide structures with customizable biochemical topologies. NPB currently supports three model types: cellulose, chitin, and polysaccharide bundles. For each generated structure, corresponding topology files are provided, with support for both GLYCAM06j and CHARMM36 force fields.
+![image](https://github.com/Hugo-Wan/Nanopolysaccharide-Builder/blob/main/icon/toc.png)
+Nanopolysaccharide Builder (NPB) is a Python-based package that enables the automatic generation of nanopolysaccharide structures with customizable biochemical topologies. NPB currently supports three model types: cellulose, chitin, and polysaccharide bundles. For each generated structure, corresponding topology files are provided, with support for both GLYCAM06j and CHARMM36 force fields. The generated files can be used for atomistic simulations and also include related static correlation functions for X-ray applications, such as diffraction studies.
 
 # Features
 1. Automated File Generation:
