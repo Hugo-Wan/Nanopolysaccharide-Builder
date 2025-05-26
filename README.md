@@ -14,8 +14,7 @@ Facilitates the building of microfibril bundle models. Currently, only cellulose
 (Extensible nanopolysaccharide support: Support for hemicellulose, and its linked with lignin and tannins, is under development.)
 
 # Requirements
-Python 3.10, Pyside, numpy PyQT5, MDAnalysis, VMD-python, psfgen, Ambertools.
-NAMD 3.0/ GROMACS/ AMBER/ LAMMPS
+Python 3.10, Pyside, numpy PyQT5, MDAnalysis, VMD-python, psfgen, Ambertools. NAMD 3.0/ GROMACS/ AMBER/ LAMMPS.
 
 # Installation
 We recommend installing NPB on a Linux system, such as Rocky Linux, Ubuntu, or similar distributions. For Windows users, we suggest running NPB inside a virtual machine (using VMware) or through the Windows Subsystem for Linux (WSL).
