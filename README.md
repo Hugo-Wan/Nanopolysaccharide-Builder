@@ -19,7 +19,9 @@ NAMD 3.0/ GROMACS/ AMBER/ LAMMPS
 
 # Installation
 We recommend installing NPB on a Linux system, such as Rocky Linux, Ubuntu, or similar distributions. For Windows users, we suggest running NPB inside a virtual machine (using VMware) or through the Windows Subsystem for Linux (WSL).
+
 For Mac users, we have encountered some issues with installing dependencies via conda. We are working on solutions, but for now, we also recommend using a Linux virtual machine to ensure compatibility and a smoother installation experience.
+
 For Linux users, installation can be completed using conda. We recommend installing Miniconda  and creating a new environment for NPB to ensure a clean and safe setup.
 ````
 conda create --name npb python=3.10 (optional)
