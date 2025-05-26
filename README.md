@@ -10,6 +10,7 @@ Supports cellulose and chitin models with various cross-sectional geometries, in
 Enables surface modification at selected crystallographic planes, allowing the construction of user-defined nanopolysaccharide structures.
 4. Microfibril Bundle Construction:
 Facilitates the building of microfibril bundle models. Currently, only cellulose is supported, with options for parallel or antiparallel arrangements of unit structures.
+
 (Extensible Material Support: Support for hemicellulose, and its linked with lignin and tannins, is under development.)
 
 # Requirements
