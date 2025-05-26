@@ -11,7 +11,7 @@ Enables surface modification at selected crystallographic planes, allowing the c
 4. Microfibril Bundle Construction:
 Facilitates the building of microfibril bundle models. Currently, only cellulose is supported, with options for parallel or antiparallel arrangements of unit structures.
 
-(Extensible Material Support: Support for hemicellulose, and its linked with lignin and tannins, is under development.)
+(Extensible nanopolysaccharide support: Support for hemicellulose, and its linked with lignin and tannins, is under development.)
 
 # Requirements
 Python 3.10, Pyside, numpy PyQT5, MDAnalysis, VMD-python, psfgen, Ambertools.
