@@ -26,3 +26,16 @@ conda activate npb (optional)
 cd /Path/to/npb
 python setup.py install
 ````
+
+# Usage
+Navigate to the /Path/to/npb/ directory in your terminal, and run:
+````
+python gui.py
+````
+A detailed tutorial is under development.
+
+# Citations
+The NPB paper is currently under submission.
+
+# Contact us
+This software is distributed under the GPLv3 License. For more information about NPB, please contact Hugo Wan (hugowan@student.ubc.ca) or Yan Yu (yuy1@ornl.gov).
