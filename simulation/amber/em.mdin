@@ -1,0 +1,25 @@
+ &cntrl
+    ! Minimization options
+    imin=1,        
+    maxcyc=5000,   ! Maximum number of minimization cycles
+    ncyc=2500,     
+
+    ! Potential energy function options
+    cut=9.0,       ! nonbonded cutoff
+
+    ! output frequency
+    ntpr=100,     
+    ntxo=2,        ! Write NetCDF format
+
+    ! SETTLE recognition
+    watnam='WAT',  ! Water residues are named WAT
+    owtnm='O',     ! Water oxygens are named O
+ /
+
+ &wt
+    type='END'
+ /
+DISANG=em.rest
+LISTIN=POUT
+LISTOUT=POUT
+&end

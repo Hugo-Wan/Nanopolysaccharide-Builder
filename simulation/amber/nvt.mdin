@@ -1,0 +1,34 @@
+&cntrl
+
+   imin=0,                     ! No minimization
+   ntx=1,                      ! Read coordinates, ignore velocities (generate new ones)
+   irest=0,                    ! Do not restart; start a new simulation
+   ntpr=500,                   ! Print energy information every 500 steps
+   ntwx=5000,                  ! Write trajectory coordinates every 500 steps
+   ntwr=5000,                  ! Write a restart file every 5000 steps
+   ntwe=500,                   ! Write energy to mdout every 500 steps
+   nscm=5000,                  ! Remove center-of-mass translation every 5000 steps
+   ntf=2,                      ! Use SHAKE for bonds involving hydrogen
+   ntc=2,                      ! Constrain bonds involving hydrogen
+   ntb=1,                      ! Constant volume (NVT ensemble)
+   ntp=0,                      ! No pressure control
+   nstlim=500000,              ! Number of MD steps for 1 ns (500,000 steps with 2 fs time step)
+   dt=0.002,                   ! Time step: 2 fs
+   cut=10.0,                   ! Non-bonded cutoff distance (10 Å)
+   tempi=100.0,                  ! Initial temperature
+   temp0=200.0,                ! Target temperature (300 K)
+   ntt=3,                      ! Langevin thermostat for temperature control
+   gamma_ln=1.0,               ! Collision frequency for Langevin thermostat
+   ig=-1,                      ! Random seed for Langevin thermostat
+   ntr=1,                      ! Apply positional restraints
+   restraintmask=':1-2',       ! 
+   restraint_wt=100.0,         ! Restraint weight (100 kcal/mol)
+&end
+
+
+# Restraint weight control
+&wt
+   type='TEMP0', istep1=0, istep2=500000, value1=100.0, value2=200.0,
+&end
+
+ 

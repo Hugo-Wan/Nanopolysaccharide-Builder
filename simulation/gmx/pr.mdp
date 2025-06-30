@@ -1,0 +1,92 @@
+
+;====================================================
+; NPT equilibration
+;====================================================
+
+;----------------------------------------------------
+; RUN CONTROL
+;----------------------------------------------------
+define       = -DPOSRES
+integrator   = md            ; 
+nsteps       = 100000        ; 2 * 100,000 fs = 200 ps
+dt           = 0.002         ; 2 fs
+comm-mode    = Linear        ; remove center of mass translation
+nstcomm      = 100           ; frequency for center of mass motion removal
+
+;----------------------------------------------------
+; OUTPUT CONTROL
+;----------------------------------------------------
+nstxout                = 0          ; save coordinates to .trr every ___ steps
+nstvout                = 0          ; save velocities to .trr every ___ steps
+nstfout                = 0          ; save forces to .trr every ___ steps
+nstxout-compressed     = 0          ; save xtc compressed trajectory output every ___ steps
+nstlog                 = 500        ; save update log file every 500 steps
+nstenergy              = 500        ; save energies every 500 steps
+nstcalcenergy          = 100        ; calculate energies every 100 steps
+
+;----------------------------------------------------
+; BOND CONSTRAINT
+;----------------------------------------------------
+constraint_algorithm   = lincs      ; holonomic constraints 
+constraints            = h-bonds    ; hydrogens only are constrained
+continuation           = yes        ; formerly known as 'unconstrained-start' - useful for exact continuations and reruns
+
+;----------------------------------------------------
+; NEIGHBOR SEARCHING
+;----------------------------------------------------
+cutoff-scheme   = Verlet
+ns-type         = grid   ; search neighboring grid cells
+nstlist         = 20     ; 
+rlist           = 1.2    ; short-range neighborlist cutoff (in nm)
+pbc             = xyz    ; 3D PBC
+
+;----------------------------------------------------
+; ELECTROSTATICS
+;----------------------------------------------------
+coulombtype      = PME      ; Particle Mesh Ewald for long-range electrostatics
+rcoulomb         = 1.2      ; short-range electrostatic cutoff (in nm)
+
+;----------------------------------------------------
+; VDW
+vdw-type                = Cut-off
+rvdw                    = 1.2
+DispCorr                = no
+vdw-modifier            = force-switch
+rvdw-switch             = 1.0
+;----------------------------------------------------
+; TEMPERATURE & PRESSURE COUPL
+;----------------------------------------------------
+Tcoupl           = V-rescale
+tc_grps          = System
+tau_t            = 1.0
+ref_t            = 300
+;
+pcoupl           = Berendsen
+pcoupltype       = isotropic           
+tau_p            = 0.5                  ; time constant (ps)
+ref_p            = 1.0                  ; reference pressure (bar)
+compressibility  = 4.5e-05              ; isothermal compressibility of water (bar^-1)
+refcoord-scaling = all
+
+;----------------------------------------------------
+; VELOCITY GENERATION
+;----------------------------------------------------
+gen_vel      = no 
+gen_temp     = 300
+gen_seed     = -1
+
+;----------------------------------------------------
+; ANNEALING
+;----------------------------------------------------
+annealing           = single
+annealing_npoints   = 2
+annealing_time      = 0 100 ;ps
+annealing_temp      = 0 300 ;K
+
+;----------------------------------------------------
+; PERIODIC MOLECULES OR NOT
+;----------------------------------------------------
+periodic-molecules   = yes   ; determined by whether the molecule is periodic or not
+
+
+

@@ -1,0 +1,38 @@
+[ defaults ]
+; nbfunc	comb-rule	gen-pairs	fudgeLJ	fudgeQQ
+1	2	yes	1.000000	1.000000
+
+[ atomtypes ]
+; name	at.num	mass	charge	ptype	sigma	epsilon	;	sigma_14	epsilon_14
+      HT     1     1.0080      0.417     A    4.00013524445e-02    1.924640e-01 
+      OT     8    15.9994     -0.834     A    3.15057422683e-01    6.363864e-01 
+
+
+[ bondtypes ]
+; i	j	func	b0	Kb
+     HT      HT     1  1.513900e-01  0.000000e+00
+     HT      OT     1  9.572000e-02  3.765600e+05
+
+
+[ angletypes ]
+; i	j	k	func	th0	Kth	s0	Kub
+     HT      OT      HT     5  1.0452000e+02  4.6024000e+02  0.0000000e+00  0.0000000e+00
+
+[ moleculetype ]
+; name	nrexcl
+     SOL	     2
+
+[ atoms ]
+; nr	type	resnr	residu	atom	cgnr	charge	mass
+     1         OT      1     SOL    OW      1     -0.834000    15.9994   ; qtot -0.834
+     2         HT      1     SOL    HW1      2     0.417000     1.0080   ; qtot -0.417
+     3         HT      1     SOL    HW2      3     0.417000     1.0080   ; qtot  0.000
+
+[ settles ]
+; OW	funct	doh	dhh
+    1     1  9.572000e-02  1.513900e-01
+
+[ exclusions ]
+    1     2     3
+    2     1     3
+    3     1     2

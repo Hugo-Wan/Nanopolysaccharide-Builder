@@ -1,0 +1,15 @@
+step 1. conda activate npb (or other virtual env. containing AmberTools)
+
+
+
+optional step for solvation and adding ions for running simulation. If you want to do the simulation in dry state, skip this step (not recommended)
+step 2. type: python fcm.py
+
+
+Energy Minimization step using Amber
+
+
+Equilibrium step using Amber
+
+
+Production step using Amber after eq step is finished

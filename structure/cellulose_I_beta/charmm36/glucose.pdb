@@ -1,0 +1,92 @@
+REMARK   1 File created by GaussView 6.0.16
+HETATM    1  C1  BGL     1      10.913   4.441  18.729                       C
+HETATM    2  H1  BGL     1       9.850   4.361  18.826                       H
+HETATM   44  O1  BGL     1      11.473   4.768  20.004                       O
+HETATM   45  HO1 BGL     1      10.843   4.553  20.695                       H
+HETATM    3  C5  BGL     1      11.039   2.792  17.011                       C
+HETATM    4  H5  BGL     1      10.082   2.583  16.992                       H
+HETATM    5  O5  BGL     1      11.428   3.202  18.309                       O
+HETATM    6  C2  BGL     1      11.237   5.559  17.744                       C
+HETATM    7  H2  BGL     1      12.215   5.657  17.700                       H
+HETATM    8  O2  BGL     1      10.684   6.796  18.186                       O
+HETATM    9  HO2 BGL     1      10.868   6.850  19.149                       H
+HETATM   10  C3  BGL     1      10.734   5.190  16.364                       C
+HETATM   11  H3  BGL     1       9.760   5.090  16.393                       H
+HETATM   12  O3  BGL     1      11.073   6.250  15.486                       O
+HETATM   13  HO3 BGL     1      10.920   5.921  14.572                       H
+HETATM   14  C4  BGL     1      11.376   3.862  15.959                       C
+HETATM   15  H4  BGL     1      12.345   3.961  15.870                       H
+HETATM   16  O4  BGL     1      10.801   3.373  14.733                       O
+HETATM   17  C6  BGL     1      11.878   1.507  16.738                       C
+HETATM   18  H61 BGL     1      12.767   1.758  16.449                       H
+HETATM   19  H62 BGL     1      11.959   0.996  17.559                       H
+HETATM   20  O6  BGL     1      11.269   0.701  15.746                       O
+HETATM   21  HO6 BGL     1      11.558  -0.224  15.908                       H
+HETATM   22  C1  BGL     2      11.510   3.707  13.539                       C
+HETATM   23  H1  BGL     2      12.475   3.761  13.702                       H
+HETATM   24  C5  BGL     2      11.385   5.357  11.821                       C
+HETATM   25  H5  BGL     2      12.342   5.565  11.802                       H
+HETATM   26  O5  BGL     2      10.996   4.946  13.119                       O
+HETATM   27  C2  BGL     2      11.186   2.590  12.554                       C
+HETATM   28  H2  BGL     2      10.209   2.492  12.510                       H
+HETATM   29  O2  BGL     2      11.740   1.353  12.996                       O
+HETATM   30  HO2 BGL     2      11.555   1.298  13.959                       H
+HETATM   31  C3  BGL     2      11.689   2.958  11.174                       C
+HETATM   32  H3  BGL     2      12.663   3.058  11.203                       H
+HETATM   33  O3  BGL     2      11.351   1.899  10.296                       O
+HETATM   34  HO3 BGL     2      11.503   2.227   9.382                       H
+HETATM   35  C4  BGL     2      11.048   4.286  10.769                       C
+HETATM   36  H4  BGL     2      10.079   4.187  10.680                       H
+HETATM   37  O4  BGL     2      11.622   4.775   9.543                       O
+HETATM   43  H   BGL     2      12.580   4.750   9.606                       H
+HETATM   38  C6  BGL     2      10.546   6.641  11.548                       C
+HETATM   39  H61 BGL     2       9.657   6.391  11.259                       H
+HETATM   40  H62 BGL     2      10.465   7.153  12.369                       H
+HETATM   41  O6  BGL     2      11.154   7.448  10.556                       O
+HETATM   42  HO6 BGL     2      10.865   8.372  10.718                       H
+END
+CONECT    1    5    6    2   44
+CONECT    2    1
+CONECT    3    4   17    5   14
+CONECT    4    3
+CONECT    5    1    3
+CONECT    6    1    7    8   10
+CONECT    7    6
+CONECT    8    6    9
+CONECT    9    8
+CONECT   10    6   11   12   14
+CONECT   11   10
+CONECT   12   10   13
+CONECT   13   12
+CONECT   14    3   10   15   16
+CONECT   15   14
+CONECT   16   14   22
+CONECT   17    3   19   20   18
+CONECT   18   17
+CONECT   19   17
+CONECT   20   17   21
+CONECT   21   20
+CONECT   22   16   27   23   26
+CONECT   23   22
+CONECT   24   25   35   38   26
+CONECT   25   24
+CONECT   26   22   24
+CONECT   27   22   28   29   31
+CONECT   28   27
+CONECT   29   27   30
+CONECT   30   29
+CONECT   31   27   33   35   32
+CONECT   32   31
+CONECT   33   31   34
+CONECT   34   33
+CONECT   35   24   31   36   37
+CONECT   36   35
+CONECT   37   35   43
+CONECT   38   24   39   40   41
+CONECT   39   38
+CONECT   40   38
+CONECT   41   38   42
+CONECT   42   41
+CONECT   43   37
+CONECT   44   45    1
+CONECT   45   44

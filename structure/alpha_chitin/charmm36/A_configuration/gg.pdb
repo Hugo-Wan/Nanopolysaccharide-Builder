@@ -1,0 +1,59 @@
+REMARK   1 File created by GaussView 6.0.16
+HETATM    1  C1  BLN N   1       1.161   8.337  12.149                       C
+HETATM    2  H1  BLN N   1       2.224   8.219  12.178                       H
+HETATM   57  O           0       0.617   8.094  13.449                       O
+HETATM   58  H           0       1.239   8.389  14.117                       H
+HETATM    3  C5  BLN N   1       1.452  10.042  10.481                       C
+HETATM    4  H5  BLN N   1       2.553   9.974  10.575                       H
+HETATM    5  O5  BLN N   1       0.836   9.676  11.733                       O
+HETATM    6  C2  BLN N   1       0.561   7.343  11.147                       C
+HETATM    7  H2  BLN N   1      -0.528   7.485  11.145                       H
+HETATM    8  N   BLN N   1       0.820   5.975  11.537                       N
+HETATM    9  HN  BLN N   1       1.801   5.667  11.556                       H
+HETATM   10  C   BLN N   1      -0.092   5.174  12.119                       C
+HETATM   11  O   BLN N   1      -1.269   5.547  12.344                       O
+HETATM   12  CT  BLN N   1       0.379   3.792  12.478                       C
+HETATM   13  HT1 BLN N   1      -0.345   3.072  12.073                       H
+HETATM   14  HT2 BLN N   1       1.382   3.562  12.105                       H
+HETATM   15  HT3 BLN N   1       0.376   3.668  13.571                       H
+HETATM   16  C3  BLN N   1       1.124   7.619   9.752                       C
+HETATM   17  H3  BLN N   1       2.211   7.388   9.753                       H
+HETATM   18  O3  BLN N   1       0.442   6.772   8.840                       O
+HETATM   19  HO3 BLN N   1       0.820   6.964   7.948                       H
+HETATM   20  C4  BLN N   1       0.971   9.097   9.379                       C
+HETATM   21  H4  BLN N   1      -0.092   9.301   9.161                       H
+HETATM   22  O4  BLN N   1       1.770   9.423   8.226                       O
+HETATM   23  C6  BLN N   1       1.110  11.501  10.195                       C
+HETATM   24  H61 BLN N   1       1.418  12.104  11.063                       H
+HETATM   25  H62 BLN N   1       1.728  11.823   9.350                       H
+HETATM   26  O6  BLN N   1      -0.275  11.725   9.957                       O
+HETATM   27  HO6 BLN N   1      -0.434  11.839   8.995                       H
+HETATM   28  C1  BLN N   2       1.197   9.203   6.983                       C
+HETATM   29  H1  BLN N   2       0.093   9.308   7.035                       H
+HETATM   30  C5  BLN N   2       0.905   7.498   5.315                       C
+HETATM   31  H5  BLN N   2      -0.196   7.566   5.408                       H
+HETATM   32  O5  BLN N   2       1.522   7.864   6.566                       O
+HETATM   33  C2  BLN N   2       1.796  10.197   5.980                       C
+HETATM   34  H2  BLN N   2       2.886  10.055   5.978                       H
+HETATM   35  N   BLN N   2       1.537  11.565   6.370                       N
+HETATM   36  HN  BLN N   2       0.557  11.873   6.350                       H
+HETATM   37  C   BLN N   2       2.449  12.366   6.953                       C
+HETATM   38  O   BLN N   2       3.626  11.993   7.178                       O
+HETATM   39  CT  BLN N   2       1.979  13.748   7.312                       C
+HETATM   40  HT1 BLN N   2       0.976  13.978   6.938                       H
+HETATM   41  HT2 BLN N   2       2.702  14.468   6.906                       H
+HETATM   42  HT3 BLN N   2       1.982  13.872   8.405                       H
+HETATM   43  C3  BLN N   2       1.233   9.921   4.585                       C
+HETATM   44  H3  BLN N   2       0.147  10.152   4.587                       H
+HETATM   45  O3  BLN N   2       1.915  10.768   3.674                       O
+HETATM   46  HO3 BLN N   2       1.538  10.576   2.782                       H
+HETATM   47  C4  BLN N   2       1.387   8.443   4.213                       C
+HETATM   48  H4  BLN N   2       2.450   8.239   3.994                       H
+HETATM   49  O4  BLN N   2       0.588   8.117   3.060                       O
+HETATM   56  H           0       1.163   7.908   2.321                       H
+HETATM   50  C6  BLN N   2       1.248   6.039   5.029                       C
+HETATM   51  H61 BLN N   2       0.630   5.717   4.183                       H
+HETATM   52  H62 BLN N   2       0.939   5.436   5.896                       H
+HETATM   53  O6  BLN N   2       2.632   5.816   4.791                       O
+HETATM   54  HO6 BLN N   2       2.791   5.701   3.829                       H
+END

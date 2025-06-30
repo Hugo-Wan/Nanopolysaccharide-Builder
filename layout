@@ -1,0 +1,23 @@
+project_directory/
+│
+├── gui.py                # GUI interface to interact with the molecular models
+├── api.py                # API interface for script-based access
+│
+├── function/
+│   ├── __init__.py       # Makes models a Python package to invoke different python function using api
+│   ├── cellulose.py      # Functions to build cellulose structures
+│   ├── chitin.py         # Functions to build chitin structures
+│   ├── hemicellulose.py  # Functions to build hemicellulose structures
+│
+├── structure/
+│   ├── cellulose
+│   │   ├── cellulose_I_alpha_unit.pdb
+│   │   ├── cellulose_I_beta_unit.pdb
+│   ├── chitin
+│   │   ├── chitosan_unit.pdb
+│   │   ├── alpha-chitin_unit.pdb
+│   │   ├── beta-chitin_unit.pdb
+│
+├── topology/
+│   ├── charmm36
+│   ├── glycam06

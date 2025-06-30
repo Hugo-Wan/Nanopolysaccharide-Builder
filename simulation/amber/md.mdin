@@ -1,0 +1,27 @@
+&cntrl
+
+  imin=0,                     ! No minimization
+  ntx=1,                      ! Coordinates and velocities from previous run
+  irest=1,                    ! Restart simulation
+  ntpr=100,                   ! Print every 100 steps
+  ntwx=5000,                  ! Write coordinates to trajectory every 5000 steps
+  ntwr=500,                   ! Write a restart file every 500 steps
+  ntwe=100,                   ! Write energies every 100 steps
+  nscm=5000,                  ! Remove translational COM motion every 5000 steps
+  ntf=2,                      ! SHAKE on bonds with hydrogen
+  ntc=2,                      ! Constrain bonds with hydrogen
+  ntb=2,                      ! Constant pressure (NPT ensemble)
+  ntp=1,                      ! Isotropic pressure scalin
+  barostat=2,                 ! MC barostat
+  pres0=1.0,                  ! Target pressure (1 atm)
+  nstlim=10000000,              ! Number of MD steps (500,000 steps = 1 ns)
+  dt=0.001,                   ! Time step (1 fs)
+  tempi=300.0,                ! Initial temperature (300 K)
+  gamma_ln= 2.0                ! Collision Frequency for thermostat
+  ig=-1,                      ! Random seed for thermostat
+  ntt=3,                      ! Langevin thermostat for temperature control
+  tautp=1,                    ! Temperature coupling constant (1 ps)
+  taup=1,                     ! Pressure relaxation time (1 ps)
+  cut=10.0,                   ! Non-bonded cutoff (10 Å)
+  ntr=0,                      ! No restrains
+&end

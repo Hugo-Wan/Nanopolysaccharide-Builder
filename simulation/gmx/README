@@ -1,0 +1,38 @@
+Please cite TopoTools as:
+Josh Vermaas et. al, (2016).https://doi.org/10.1021/acs.jcim.6b00103
+Axel Kohlmeyer & Josh Vermaas, (2022). TopoTools: Release 1.9 (if you used version 1.9) https://doi.org/10.5281/zenodo.598373
+
+
+
+step_1.  vmd xxx.psf xxx.pdb
+
+step_2.  type the following the vmd tk console :
+(a). package require topotools    or    package require topotools 1.9
+(b). topo writegmxtop system.top par_all36_carb.prm
+
+
+step_3.  solvation if needed.
+gmx solvate -cp xxx.pdb(or xxx.gro) -cs spc216.gro -p system.top -o em.gro
+
+step_4. neutralization if needed
+gmx grompp -f em.mdp -c system.gro -p system.top -o em.tpr -maxwarn 1
+gmx genion -s em.tpr -p system.top -o system.gro -pname NA -np xx(type one integer) -nname CL -nn xx(type on integer)
+
+step_5 energy minimization step
+gmx grompp -f em.mdp -c system.gro -p system.top -o em.tpr 
+gmx mdrun -v -deffnm em -ntmpi 1 -pin on
+
+step_6 pre-equilibrium step
+gmx grompp -f pr.mdp -c em.gro -p system.top -o pr.tpr 
+gmx mdrun -v -deffnm pr -ntmpi 1 -pin on
+
+    #running in gpu you can use
+     gmx mdrun -v -deffnm pr -ntmpi 1 -pin on -pme gpu -nb gpu -bonded gpu -update gpu
+
+
+step_6 production step
+gmx grompp -f md.mdp -c pr.gro -p system.top -o md.tpr 
+gmx mdrun -v -deffnm md -ntmpi 1 -pin on
+
+    #running in gpu you can use
+    gmx mdrun -v -deffnm md -ntmpi 1 -pin on -pme gpu -nb gpu -bonded gpu -update gpu
