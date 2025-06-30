@@ -24,9 +24,19 @@ For Mac users, we have encountered some issues with installing dependencies via 
 
 For Linux users, installation can be completed using conda. We recommend installing Miniconda  and creating a new environment for NPB to ensure a clean and safe setup.
 ````
+# Create a new environment with Python 3.10
 conda create --name npb python=3.10 (optional)
+
+# Activate the environment
 conda activate npb (optional)
-cd /Path/to/npb
+
+# Unzip the compressed zip file of NPB
+unzip Nanopolysaccharide-Builder.zip
+
+# Navigate to the extracted NPB directory:
+cd /Path/to/Nanopolysaccharide-Builder
+
+# Install the NPB package:
 python setup.py install
 ````
 
@@ -35,10 +45,13 @@ Navigate to the /Path/to/npb/ directory in your terminal, and run:
 ````
 python gui.py
 ````
-A detailed tutorial is under development.
+## 📘 User Manual
+A detailed user manual is available:
+- 🔗 [**Read Online**](https://github.com/Hugo-Wan/Nanopolysaccharide-Builder/blob/main/manual.pdf)
+- ⬇️ [**Download PDF**](https://github.com/Hugo-Wan/Nanopolysaccharide-Builder/raw/main/manual.pdf)
 
 # Citations
-The NPB paper is currently under submission.
+The NPB paper is currently under revision.
 
 # Contact us
 This software is distributed under the GPLv3 License. For more information about NPB, please contact Hugo Wan (hugowan@student.ubc.ca) or Yan Yu (yuy1@ornl.gov).
