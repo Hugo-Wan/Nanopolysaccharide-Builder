@@ -155,13 +155,13 @@ for i in range(1, 4):
                            0
                          ]
     chain_1_1st_layer_u.atoms.positions += translation_vector
-    segid_increment_value = 1 
+    segid_increment_value = i 
     for atom in chain_1_1st_layer_u.atoms:
         numeric_part = atom.segid.replace('','')
         new_numeric_part = int(numeric_part) + segid_increment_value
     new_segid = f"{new_numeric_part}"
     atom.segment.segid = new_segid
-
+    
     chain_1_1st_layer_output = f"chain_1_1st_layer_{i}.pdb"
     chain_1_1st_layer.append(chain_1_1st_layer_output)
     with mda.Writer(chain_1_1st_layer_output, n_atoms=chain_1_1st_layer_u.atoms.n_atoms) as W:
