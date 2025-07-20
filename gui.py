@@ -3757,7 +3757,6 @@ class ModelViewer(QMainWindow):
             QMessageBox.warning(self, "Parsing Error", f"Failed to parse the output:\n{last_line}\nError: {e}")
             return
     
-        # Format and show
         carboxylation_formatted = "{:.2f}".format(carboxylation_in_charge_density)
         carboxylation_degree_formatted = "{:.2f}".format(carboxylation_degree)
         ph_formatted = "{:.2f}".format(ph)
@@ -10670,7 +10669,7 @@ class ModelViewer(QMainWindow):
             command = ["python", script_path]
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             if result.returncode == 0:
-                self.CelluloseIB_exp_36chain_carboxylation_Topology_Popup()
+                self.CelluloseIB_exp_36square_carboxylation_Topology_Popup()
             else:
                 QMessageBox.warning(self, "Carboxylated cellulose-Iβ Topology Generation Failed")
         except Exception as e:
@@ -10785,7 +10784,7 @@ class ModelViewer(QMainWindow):
             command = ["python", script_path]
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             if result.returncode == 0:
-                self.CelluloseIB_exp_36chain_carboxylation_Topology_Popup()
+                self.CelluloseIB_exp_rectangle_carboxylation_Topology_Popup()
             else:
                 QMessageBox.warning(self, "Carboxylated cellulose-Iβ Topology Generation Failed")
         except Exception as e:
@@ -10899,7 +10898,7 @@ class ModelViewer(QMainWindow):
             command = ["python", script_path]
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             if result.returncode == 0:
-                self.CelluloseIB_exp_36chain_carboxylation_Topology_Popup()
+                self.CelluloseIB_exp_parallelogram_carboxylation_Topology_Popup()
             else:
                 QMessageBox.warning(self, "Carboxylated cellulose-Iβ Topology Generation Failed")
         except Exception as e:
@@ -10985,7 +10984,1682 @@ class ModelViewer(QMainWindow):
         CelluloseII_mainLayout = QVBoxLayout(tab)  # Primary layout to arrange content vertically
         CelluloseII_topLayout = QHBoxLayout()  # Use horizontal layout for top-aligned items
         CelluloseII_topLayout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # Align content to the top left
+
+        CelluloseII_font = QFont("Arial", 13)
+    
+        # Label for the dropdown
+        CelluloseII_label = QLabel("Please select the crystal structure to build Cellulose-II crystallite:")
+        CelluloseII_label.setFont(CelluloseII_font)
+        CelluloseII_topLayout.addWidget(CelluloseII_label)  # Add label to the horizontal layout
+        CelluloseII_comboBox = QComboBox()
+        CelluloseII_comboBox.setFont(CelluloseII_font)
+        CelluloseII_comboBox.addItem("Select here")  
+        CelluloseII_comboBox.addItem("Mercerized Cellulose-II")
+        #CelluloseII_comboBox.addItem("Cellulose-II")
+        CelluloseII_comboBox.currentIndexChanged.connect(self.updateCelluloseIIOptions)
+        CelluloseII_comboBox.setMinimumSize(QSize(240, 30))  # Set minimum size
+        CelluloseII_comboBox.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        CelluloseII_comboBox.setMaxVisibleItems(10)
+        CelluloseII_topLayout.addWidget(CelluloseII_comboBox)  # Add combo box to the horizontal layout
         CelluloseII_mainLayout.addLayout(CelluloseII_topLayout) 
+
+        self.CelluloseII_StackedWidget = QStackedWidget()
+        self.CelluloseII_StackedWidget.addWidget(QWidget())  
+        self.setupMerCelluloseIIOptions()  # Setup options for Mercerized CelluloseII
+        #self.setupCelluloseIIOptions()    ##other options in the future  
+        CelluloseII_mainLayout.addWidget(self.CelluloseII_StackedWidget)
+#
+#
+    def updateCelluloseIIOptions(self, index):
+        #print("Selected index in CelluloseI ComboBox:", index)
+        if index == 0:
+            self.CelluloseII_StackedWidget.setVisible(False)
+        elif index == 1:
+            self.CelluloseII_StackedWidget.setCurrentIndex(1)
+            self.CelluloseII_StackedWidget.setVisible(True)
+        elif index == 2:
+            self.CelluloseII_StackedWidget.setCurrentIndex(2)
+            self.CelluloseII_StackedWidget.setVisible(True)
+#
+#
+#
+###-------Mercerized cellulose-II----------------
+    def setupMerCelluloseIIOptions(self):
+        self.MerCelluloseIIOptions = QWidget()
+        self.CelluloseII_StackedWidget.addWidget(self.MerCelluloseIIOptions)
+        MerCelluloseII_layout = QVBoxLayout(self.MerCelluloseIIOptions)
+        MerCelluloseII_layout.setAlignment(Qt.AlignTop)
+        MerCelluloseII_Font = QFont("Arial", 13)
+
+        # Radio buttons setup
+        self.MerCelluloseII_radioGroup = QGroupBox("Parameter Type")
+        self.MerCelluloseII_radioGroup.setAlignment(Qt.AlignTop)
+        MerCelluloseII_radioLayout = QHBoxLayout()
+        self.MerCelluloseII_Experimental = QRadioButton("Crystallographic Parameters from Neutron Diffraction Experiments")
+        self.MerCelluloseII_UserDefined = QRadioButton("User-Defined Crystallographic Parameters")
+        self.MerCelluloseII_Experimental.setFont(MerCelluloseII_Font)
+        self.MerCelluloseII_UserDefined.setFont(MerCelluloseII_Font)
+        MerCelluloseII_radioLayout.addWidget(self.MerCelluloseII_Experimental)
+        MerCelluloseII_radioLayout.addWidget(self.MerCelluloseII_UserDefined)
+        MerCelluloseII_layout.addLayout(MerCelluloseII_radioLayout)
+
+        # Combo box setup
+        self.MerCelluloseII_ComboBox = QComboBox(self.MerCelluloseIIOptions)
+        self.MerCelluloseII_ComboBox.addItem("Please select the crystallite shape")
+        self.MerCelluloseII_ComboBox.addItems(["Parallelogram cross-section shape"])  ####add more options in the future for more cross-section selections
+        self.MerCelluloseII_ComboBox.setVisible(False)
+        MerCelluloseII_layout.addWidget(self.MerCelluloseII_ComboBox)
+
+        # Connecting radio buttons to toggle visibility
+        self.MerCelluloseII_Experimental.toggled.connect(self.MerCelluloseII_Visibility)
+        self.MerCelluloseII_UserDefined.toggled.connect(self.MerCelluloseII_Visibility)
+        self.MerCelluloseII_ComboBox.currentIndexChanged.connect(self.MerCelluloseII_updateParametersDisplay)
+
+        # Parameter display setup
+        self.MerCelluloseII_parametersGroup = QGroupBox("Crystallographic parameters")
+        MerCelluloseII_parametersLayout = QVBoxLayout()  
+        self.MerCelluloseII_parametersGroup.setLayout(MerCelluloseII_parametersLayout)
+        self.MerCelluloseII_parametersGroup.setVisible(False)
+        MerCelluloseII_layout.addWidget(self.MerCelluloseII_parametersGroup)
+        self.MerCelluloseII_initParameterWidgets(MerCelluloseII_Font)
+
+        ##demonstration for MerCelluloseII cross-sction and building structure
+        self.MerCelluloseII_imageLabel = QLabel(self)
+        self.MerCelluloseII_imageLabel.setFixedSize(1000, 250) 
+        self.MerCelluloseII_imageLabel.setAlignment(Qt.AlignCenter)
+        self.MerCelluloseII_imageLabel.setScaledContents(True)
+        MerCelluloseII_layout.addWidget(self.MerCelluloseII_imageLabel)
+        self.MerCelluloseII_imageLabel.clear()
+        MerCelluloseII_layout.addWidget(self.MerCelluloseII_imageLabel)
+        MerCelluloseII_layout.setAlignment(self.MerCelluloseII_imageLabel, Qt.AlignCenter)  
+        self.MerCelluloseII_ComboBox.currentIndexChanged.connect(self.MerCelluloseII_updateImageDisplay)
+
+
+        ###citation for MerCelluloseII  crystallographic parameter
+        self.MerCelluloseII_citationLabel = QLabel("Crystallographic parameter reference: Paul et al. Biomacromolecules 2001, 2, 2, 410–416.")
+        self.MerCelluloseII_citationLabel.setWordWrap(True)
+        MerCelluloseII_citation_font = self.MerCelluloseII_citationLabel.font()
+        MerCelluloseII_citation_font.setPointSize(6) 
+        self.MerCelluloseII_citationLabel.setFont(MerCelluloseII_citation_font)
+        MerCelluloseII_layout.addWidget(self.MerCelluloseII_citationLabel)
+        self.MerCelluloseII_citationLabel.hide()
+
+        # Connect combo box selection changes to update display
+        self.MerCelluloseII_ComboBox.currentIndexChanged.connect(self.MerCelluloseII_updateParametersDisplay)
+
+        # Invoke button setup, initially hidden
+        self.MerCelluloseII_invokeButton = QPushButton("Invoke Script")
+        self.MerCelluloseII_invokeButton.setVisible(False)
+        self.MerCelluloseII_invokeButton.clicked.connect(self.MerCelluloseII_invokeScript)
+        MerCelluloseII_layout.addWidget(self.MerCelluloseII_invokeButton)
+
+
+
+    def MerCelluloseII_initParameterWidgets(self, font):
+        # Create two horizontal layouts
+        self.MerCelluloseII_paramLine1 = QHBoxLayout()
+        self.MerCelluloseII_paramLine2 = QHBoxLayout()
+        self.MerCelluloseII_paramLine3 = QHBoxLayout()
+
+        # Initialize QLineEdit objects for parameters and repeat units
+        self.MerCelluloseII_aParam = QLineEdit()
+        self.MerCelluloseII_bParam = QLineEdit()
+        self.MerCelluloseII_cParam = QLineEdit()
+        self.MerCelluloseII_gammaParam = QLineEdit()
+        self.MerCelluloseII_aRepeatUnits = QLineEdit()
+        self.MerCelluloseII_bRepeatUnits = QLineEdit()
+        self.MerCelluloseII_cRepeatUnits = QLineEdit()
+
+
+        self.MerCelluloseII_width = QLineEdit()
+        self.MerCelluloseII_height = QLineEdit()
+
+        # Add widgets to first line layout
+        self.MerCelluloseII_setupParameterWidget("a (Å)", self.MerCelluloseII_aParam, True, "", self.MerCelluloseII_paramLine1, font)
+        self.MerCelluloseII_setupParameterWidget("b (Å)", self.MerCelluloseII_bParam, True, "", self.MerCelluloseII_paramLine1, font)
+        self.MerCelluloseII_setupParameterWidget("c (Å)", self.MerCelluloseII_cParam, True, "", self.MerCelluloseII_paramLine1, font)
+        self.MerCelluloseII_setupParameterWidget("gamma angle γ (°)", self.MerCelluloseII_gammaParam, True, "", self.MerCelluloseII_paramLine1, font)
+
+
+
+        self.MerCelluloseII_setupParameterWidget("Cross-section width (Å)", self.MerCelluloseII_width, True, "", self.MerCelluloseII_paramLine2, font)
+        self.MerCelluloseII_setupParameterWidget("Cross-section height (Å)", self.MerCelluloseII_height, True, "", self.MerCelluloseII_paramLine2, font)
+
+        # Add widgets to second line layout
+        self.MerCelluloseII_setupParameterWidget("a repetition", self.MerCelluloseII_aRepeatUnits, True, "", self.MerCelluloseII_paramLine3, font)
+        self.MerCelluloseII_setupParameterWidget("b repetition", self.MerCelluloseII_bRepeatUnits, True, "", self.MerCelluloseII_paramLine3, font)
+        self.MerCelluloseII_setupParameterWidget("c repetition", self.MerCelluloseII_cRepeatUnits, False, "", self.MerCelluloseII_paramLine3, font)
+
+        # Add both lines to the group box layout
+        self.MerCelluloseII_parametersGroup.layout().addLayout(self.MerCelluloseII_paramLine1)
+        self.MerCelluloseII_parametersGroup.layout().addLayout(self.MerCelluloseII_paramLine2)
+        self.MerCelluloseII_parametersGroup.layout().addLayout(self.MerCelluloseII_paramLine3)
+
+    def MerCelluloseII_updateImageDisplay(self, index):
+        MerCelluloseII_shape = self.MerCelluloseII_ComboBox.currentText()
+        if MerCelluloseII_shape == "Parallelogram cross-section shape":
+            MerCelluloseII_pixmap =  QPixmap(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'image', 'cellulose', 'cellulose-II', 'cellulose-II.png') )
+        else:
+            self.MerCelluloseII_imageLabel.clear()
+            return
+        self.MerCelluloseII_imageLabel.setPixmap(MerCelluloseII_pixmap)
+        self.MerCelluloseII_imageLabel.show()
+
+
+    def MerCelluloseII_setupParameterWidget(self, MerCelluloseII_label, MerCelluloseII_widget, readOnly, MerCelluloseII_defaultValue, MerCelluloseII_layout, MerCelluloseII_font):
+        MerCelluloseII_labelWidget = QLabel(MerCelluloseII_label)
+        MerCelluloseII_labelWidget.setFont(MerCelluloseII_font)
+        MerCelluloseII_widget.setFont(MerCelluloseII_font)
+        MerCelluloseII_widget.setReadOnly(readOnly)
+        MerCelluloseII_widget.setText(MerCelluloseII_defaultValue)
+        if readOnly:
+            MerCelluloseII_widget.setStyleSheet("background-color: lightgrey;")
+        MerCelluloseII_layout.addWidget(MerCelluloseII_labelWidget)
+        MerCelluloseII_layout.addWidget(MerCelluloseII_widget)
+
+
+    def MerCelluloseII_updateReadOnlyState(self, MerCelluloseII_widget, readOnly):
+        MerCelluloseII_widget.setReadOnly(readOnly)
+        if readOnly:
+            MerCelluloseII_widget.setStyleSheet("background-color: #D3D3D3;")  # Light grey background
+            MerCelluloseII_widget.setEnabled(False)  # Optionally disable the widget to make it clear it's not interactive
+        else:
+            MerCelluloseII_widget.setStyleSheet("background-color: white;")
+            MerCelluloseII_widget.setEnabled(True)  # Re-enable the widget for user interaction
+
+    def MerCelluloseII_Visibility(self, checked):
+        self.MerCelluloseII_ComboBox.setVisible(checked)
+        if checked:
+            self.MerCelluloseII_ComboBox.setCurrentIndex(0) 
+            self.MerCelluloseII_parametersGroup.setVisible(False)
+        else:
+            self.MerCelluloseII_ComboBox.setVisible(False)
+            self.MerCelluloseII_parametersGroup.setVisible(False)
+
+    def MerCelluloseII_updateParametersDisplay(self):
+        if self.MerCelluloseII_ComboBox.currentIndex() == 0:
+            self.MerCelluloseII_parametersGroup.setVisible(False)
+        else:
+            self.MerCelluloseII_parametersGroup.setVisible(True)
+            model = self.MerCelluloseII_ComboBox.currentText()
+            if self.MerCelluloseII_Experimental.isChecked() :
+                self.MerCelluloseII_citationLabel.show()
+                if model in ["Parallelogram cross-section shape"]:
+                    # Set up modifications section if Experimental is checked and model is one of the specified chain models
+                    
+                    self.MerCelluloseII_setupModificationsSection(self.MerCelluloseII_parametersGroup.layout(), QFont("Arial", 13))
+
+
+                    self.MerCelluloseII_aRepeatUnits.clear()
+                    self.MerCelluloseII_bRepeatUnits.clear()
+                    self.MerCelluloseII_cRepeatUnits.clear()       
+                    self.MerCelluloseII_width.clear()
+                    self.MerCelluloseII_height.clear()      
+  
+                    # Set fields with preset values and adjustments for editability
+                    self.MerCelluloseII_aParam.setText("8.10")
+                    self.MerCelluloseII_bParam.setText("9.03")
+                    self.MerCelluloseII_cParam.setText("10.31")
+                    self.MerCelluloseII_gammaParam.setText("117.10") 
+                    self.MerCelluloseII_cRepeatUnits.setStyleSheet("background-color: white;")  
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_aParam, True)    
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_bParam, True)             
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_cParam, True)             
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_gammaParam, True)      
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_bRepeatUnits, False)    
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_aRepeatUnits, False)             
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_width, True)             
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_height, True)   
+                    self.MerCelluloseII_width.setStyleSheet("background-color: #D3D3D3;") 
+                    self.MerCelluloseII_height.setStyleSheet("background-color: #D3D3D3;")     
+    
+
+
+            elif self.MerCelluloseII_UserDefined.isChecked() :
+                self.MerCelluloseII_citationLabel.hide()
+                if model in ["Parallelogram cross-section shape"]:
+                    # Set up modifications section if Experimental is checked and model is one of the specified chain models
+
+                    self.MerCelluloseII_setupModificationsSection(self.MerCelluloseII_parametersGroup.layout(), QFont("Arial", 13))
+                    self.MerCelluloseII_aParam.clear()
+                    self.MerCelluloseII_bParam.clear()
+                    self.MerCelluloseII_cParam.clear()
+                    self.MerCelluloseII_gammaParam.clear()
+                    self.MerCelluloseII_aRepeatUnits.clear()
+                    self.MerCelluloseII_bRepeatUnits.clear()
+                    self.MerCelluloseII_cRepeatUnits.clear()
+                    self.MerCelluloseII_width.clear()
+                    self.MerCelluloseII_height.clear()            
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_aParam, False)    
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_bParam, False)             
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_cParam, False)             
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_gammaParam, False)             
+                    self.MerCelluloseII_cRepeatUnits.setStyleSheet("background-color: white;")     
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_bRepeatUnits, False)    
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_aRepeatUnits, False)             
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_width, True)             
+                    self.MerCelluloseII_updateReadOnlyState(self.MerCelluloseII_height, True)   
+                    self.MerCelluloseII_width.setStyleSheet("background-color: #D3D3D3;") 
+                    self.MerCelluloseII_height.setStyleSheet("background-color: #D3D3D3;")         
+            else:
+                # Hide modification options if not the specific model and type
+                for i in reversed(range(self.MerCelluloseII_modificationsLayout.count())): 
+                    self.MerCelluloseII_modificationsLayout.itemAt(i).widget().setParent(None)
+
+    def MerCelluloseII_setupModificationsSection(self, MerCelluloseII_layout, MerCelluloseII_font):
+        # Add a layout for modifications if it doesn't exist
+        if not hasattr(self, 'MerCelluloseII_modificationsLayout'):
+            self.MerCelluloseII_modificationsLayout = QHBoxLayout()
+            self.MerCelluloseII_carboxylationRadio = QRadioButton("Carboxylation")
+            self.MerCelluloseII_sulfateRadio = QRadioButton("Sulfate")
+            self.MerCelluloseII_noModRadio = QRadioButton("No Modification")
+            self.MerCelluloseII_sulfateRadio.setFont(MerCelluloseII_font)
+            self.MerCelluloseII_carboxylationRadio.setFont(MerCelluloseII_font)
+            self.MerCelluloseII_noModRadio.setFont(MerCelluloseII_font)
+            self.MerCelluloseII_modificationsLayout.addWidget(self.MerCelluloseII_carboxylationRadio)
+            self.MerCelluloseII_modificationsLayout.addWidget(self.MerCelluloseII_sulfateRadio)
+
+            self.MerCelluloseII_modificationsLayout.addWidget(self.MerCelluloseII_noModRadio)
+            MerCelluloseII_layout.addLayout(self.MerCelluloseII_modificationsLayout)
+
+            # Setup Inputs and Connections
+            self.MerCelluloseII_setupModificationInputs()
+            MerCelluloseII_layout.addWidget(self.MerCelluloseII_modificationInputsWidget)
+            self.MerCelluloseII_sulfateRadio.toggled.connect(lambda checked: self.MerCelluloseII_updateModificationInputs("Sulfate", checked))
+            self.MerCelluloseII_carboxylationRadio.toggled.connect(lambda checked: self.MerCelluloseII_updateModificationInputs("Carboxylation", checked))
+            self.MerCelluloseII_noModRadio.toggled.connect(lambda checked: self.MerCelluloseII_updateModificationInputs("None", checked))
+
+
+            # Generate Structure Button
+            MerCelluloseII_Font = QFont("Arial", 13)
+            self.MerCelluloseII_invokeButton = QPushButton("Generate Structure")
+            self.MerCelluloseII_invokeButton.setFont(MerCelluloseII_Font)
+            self.MerCelluloseII_invokeButton.setVisible(False)  # Initially hidden
+            self.MerCelluloseII_invokeButton.clicked.connect(self.MerCelluloseII_invokeScript)  # Connect to invoke script logic
+            MerCelluloseII_layout.addWidget(self.MerCelluloseII_invokeButton)
+            
+            
+    def MerCelluloseII_setupModificationInputs(self):
+        self.MerCelluloseII_modificationInputsWidget = QWidget()
+        MerCelluloseII_modification_mainLayout = QVBoxLayout(self.MerCelluloseII_modificationInputsWidget)
+        MerCelluloseII_font = QFont("Arial", 13)
+        MerCelluloseII_font_Sel = QFont("Arial", 12)
+
+        MerCelluloseII_carboxylation_plane_layout = QHBoxLayout()
+        self.MerCelluloseII_carboxylation_planeLabel = QLabel("Please select Mercerized Cellulose II plane for carboxylation modifications:")
+        self.MerCelluloseII_carboxylation_planeLabel.setFont(MerCelluloseII_font)
+        self.MerCelluloseII_carboxylation_planeComboBox = QComboBox()
+        self.MerCelluloseII_carboxylation_planeComboBox.setFont(MerCelluloseII_font_Sel)
+        self.MerCelluloseII_carboxylation_planeComboBox.addItems([ "Select here",
+                                                                 "Single (010) plane",        
+                                                                 "Two (010) planes", 
+                                                                 "Single (100) plane",
+                                                                 "Two (100) planes",
+                                                                 "Single (010) and (100) planes",                                                      
+                                                                 "Both (010) and (100) planes" ])
+        MerCelluloseII_carboxylation_plane_layout.addWidget(self.MerCelluloseII_carboxylation_planeLabel)
+        MerCelluloseII_carboxylation_plane_layout.addWidget(self.MerCelluloseII_carboxylation_planeComboBox)
+        MerCelluloseII_modification_mainLayout.addLayout(MerCelluloseII_carboxylation_plane_layout)
+
+
+        # Degree of sulfate input
+        MerCelluloseII_sulfate_plane_layout = QHBoxLayout()
+        self.MerCelluloseII_sulfate_planeLabel = QLabel("Please select Mercerized Cellulose II plane for sulfate modifications:")
+        self.MerCelluloseII_sulfate_planeLabel.setFont(MerCelluloseII_font)
+        self.MerCelluloseII_sulfate_planeComboBox = QComboBox()
+        self.MerCelluloseII_sulfate_planeComboBox.setFont(MerCelluloseII_font_Sel)
+        self.MerCelluloseII_sulfate_planeComboBox.addItems ([ "Select here",
+                                                               "Single (010) plane",        
+                                                               "Two (010) planes", 
+                                                               "Single (100) plane",
+                                                               "Two (100) planes",
+                                                               "Single (010) and (100) planes",
+                                                               "Both (010) and (100) planes" ])
+        MerCelluloseII_sulfate_plane_layout.addWidget(self.MerCelluloseII_sulfate_planeLabel)
+        MerCelluloseII_sulfate_plane_layout.addWidget(self.MerCelluloseII_sulfate_planeComboBox)
+        MerCelluloseII_modification_mainLayout.addLayout(MerCelluloseII_sulfate_plane_layout)
+
+
+        ##surface charge for sulfate
+        #MerCelluloseII_sulfate_layout = QHBoxLayout()
+        MerCelluloseII_sulfate_pH_layout = QHBoxLayout()
+        self.MerCelluloseII_sulfate_Label = QLabel("Surface charge density (unit: mmol/g):")
+        self.MerCelluloseII_sulfate_Label.setFont(MerCelluloseII_font)
+        
+        self.MerCelluloseII_sulfate_LineEdit = QLineEdit()
+        self.MerCelluloseII_sulfate_LineEdit.setFont(MerCelluloseII_font)
+        self.MerCelluloseII_sulfate_LineEdit.setFixedSize(QSize(200, 40))
+        self.MerCelluloseII_sulfate_pHLabel = QLabel("pH level of cellulose-Iβ structure (>0 and <14):")
+        self.MerCelluloseII_sulfate_pHLabel.setFont(MerCelluloseII_font)
+        self.MerCelluloseII_sulfate_pHLineEdit = QLineEdit()
+        self.MerCelluloseII_sulfate_pHLineEdit.setFont(MerCelluloseII_font)
+        self.MerCelluloseII_sulfate_pHLineEdit.setFixedSize(QSize(200, 40))
+        MerCelluloseII_sulfate_pH_layout.addWidget(self.MerCelluloseII_sulfate_Label)
+        MerCelluloseII_sulfate_pH_layout.addWidget(self.MerCelluloseII_sulfate_LineEdit)
+        MerCelluloseII_sulfate_pH_layout.addSpacing(100)  ##space between dda and pH
+        MerCelluloseII_sulfate_pH_layout.addWidget(self.MerCelluloseII_sulfate_pHLabel)
+        MerCelluloseII_sulfate_pH_layout.addWidget(self.MerCelluloseII_sulfate_pHLineEdit)
+        MerCelluloseII_modification_mainLayout.addLayout(MerCelluloseII_sulfate_pH_layout)
+        #MerCelluloseII_sulfate_layout.addWidget(self.MerCelluloseII_sulfate_Label)
+
+        #MerCelluloseII_sulfate_layout.addWidget(self.MerCelluloseII_sulfate_LineEdit)
+        #MerCelluloseII_modification_mainLayout.addLayout(MerCelluloseII_sulfate_layout)
+
+
+        # Degree of carboxylation input
+        MerCelluloseII_carboxylation_pH_layout = QHBoxLayout()
+        self.MerCelluloseII_carboxylation_Label = QLabel("Surface charge density (unit: mmol/g):")
+        self.MerCelluloseII_carboxylation_Label.setFont(MerCelluloseII_font)
+        self.MerCelluloseII_carboxylation_LineEdit = QLineEdit()
+        self.MerCelluloseII_carboxylation_LineEdit.setFont(MerCelluloseII_font)
+        self.MerCelluloseII_carboxylation_LineEdit.setFixedSize(QSize(200, 40))
+        self.MerCelluloseII_carboxylation_pHLabel = QLabel("pH level of cellulose-Iβ structure (>0 and <14):")
+        self.MerCelluloseII_carboxylation_pHLabel.setFont(MerCelluloseII_font)
+        self.MerCelluloseII_carboxylation_pHLineEdit = QLineEdit()
+        self.MerCelluloseII_carboxylation_pHLineEdit.setFont(MerCelluloseII_font)
+        self.MerCelluloseII_carboxylation_pHLineEdit.setFixedSize(QSize(200, 40))
+        MerCelluloseII_carboxylation_pH_layout.addWidget(self.MerCelluloseII_carboxylation_Label)
+        MerCelluloseII_carboxylation_pH_layout.addWidget(self.MerCelluloseII_carboxylation_LineEdit)
+        MerCelluloseII_carboxylation_pH_layout.addSpacing(100)  ##space between dda and pH
+        MerCelluloseII_carboxylation_pH_layout.addWidget(self.MerCelluloseII_carboxylation_pHLabel)
+        MerCelluloseII_carboxylation_pH_layout.addWidget(self.MerCelluloseII_carboxylation_pHLineEdit)
+        MerCelluloseII_modification_mainLayout.addLayout(MerCelluloseII_carboxylation_pH_layout)
+
+
+        MerCelluloseII_ForceField_layout = QHBoxLayout()
+        self.MerCelluloseII_ForceFieldTypeLabel = QLabel("Atomistic Simulation Force Field:")
+        self.MerCelluloseII_ForceFieldTypeLabel.setFont(MerCelluloseII_font)
+        self.MerCelluloseII_ForceFieldTypeselector = QComboBox()
+        self.MerCelluloseII_ForceFieldTypeselector.setFont(MerCelluloseII_font)
+        #self.MerCelluloseII_ForceFieldTypeLabel.setFixedSize(550, 60)  # Width of 200 pixels and height of 20 pixels
+        self.MerCelluloseII_ForceFieldTypeselector.addItem("Please select the force field for atomistic simulations", True)
+        self.MerCelluloseII_ForceFieldTypeselector.addItem("CHARMM36 Infinite Chain Model", False)
+        self.MerCelluloseII_ForceFieldTypeselector.addItem("CHARMM36 Finite Chain Model", False)
+        self.MerCelluloseII_ForceFieldTypeselector.addItem("GLYCAM06 Infinite Chain Model", False)
+        self.MerCelluloseII_ForceFieldTypeselector.addItem("GLYCAM06 Finite Chain Model", False)
+        MerCelluloseII_ForceField_layout.addWidget(self.MerCelluloseII_ForceFieldTypeLabel)
+        MerCelluloseII_ForceField_layout.addWidget(self.MerCelluloseII_ForceFieldTypeselector)
+        MerCelluloseII_modification_mainLayout.addLayout(MerCelluloseII_ForceField_layout)
+
+        self.MerCelluloseII_sulfate_planeLabel.setVisible(False)
+        self.MerCelluloseII_sulfate_planeComboBox.setVisible(False)
+        self.MerCelluloseII_carboxylation_planeLabel.setVisible(False)
+        self.MerCelluloseII_carboxylation_planeComboBox.setVisible(False)
+
+        self.MerCelluloseII_sulfate_Label.setVisible(False)
+        self.MerCelluloseII_sulfate_LineEdit.setVisible(False)
+        self.MerCelluloseII_sulfate_pHLabel.setVisible(False)
+        self.MerCelluloseII_sulfate_pHLineEdit.setVisible(False)
+
+        self.MerCelluloseII_carboxylation_Label.setVisible(False)
+        self.MerCelluloseII_carboxylation_LineEdit.setVisible(False)
+        self.MerCelluloseII_carboxylation_pHLabel.setVisible(False)
+        self.MerCelluloseII_carboxylation_pHLineEdit.setVisible(False)
+
+
+        self.MerCelluloseII_ForceFieldTypeLabel.setVisible(False)
+        self.MerCelluloseII_ForceFieldTypeselector.setVisible(False)
+
+        self.MerCelluloseII_sulfate_planeComboBox.currentIndexChanged.connect(
+        lambda: self.MerCelluloseII_manageVisibilityAndStylesForsulfate(
+            self.MerCelluloseII_sulfate_planeComboBox.currentText()
+           )
+        )
+        self.MerCelluloseII_modificationInputsWidget.setLayout(MerCelluloseII_modification_mainLayout)
+
+        self.MerCelluloseII_carboxylation_planeComboBox.currentIndexChanged.connect(
+        lambda: self.MerCelluloseII_manageVisibilityAndStylesForCarboxylation(
+            self.MerCelluloseII_carboxylation_planeComboBox.currentText()
+           )
+        )
+        self.MerCelluloseII_modificationInputsWidget.setLayout(MerCelluloseII_modification_mainLayout)
+
+
+
+    def MerCelluloseII_updateModificationInputs(self, MerCelluloseII_modificationType, checked):
+        if checked:
+            if  MerCelluloseII_modificationType == "Sulfate":
+                MerCelluloseII_sulfate_plane_selection = self.MerCelluloseII_sulfate_planeComboBox.currentText()
+                self.MerCelluloseII_manageVisibilityAndStylesForsulfate(MerCelluloseII_sulfate_plane_selection)
+            
+            elif MerCelluloseII_modificationType == "Carboxylation":
+                MerCelluloseII_carboxylation_plane_selection = self.MerCelluloseII_carboxylation_planeComboBox.currentText()
+                self.MerCelluloseII_manageVisibilityAndStylesForCarboxylation(MerCelluloseII_carboxylation_plane_selection)
+            elif  MerCelluloseII_modificationType == "None":
+                self.MerCelluloseII_sulfate_Label.setVisible(False)
+                self.MerCelluloseII_sulfate_LineEdit.setVisible(False)
+                self.MerCelluloseII_sulfate_pHLabel.setVisible(False)
+                self.MerCelluloseII_sulfate_pHLineEdit.setVisible(False)
+                
+                self.MerCelluloseII_carboxylation_Label.setVisible(False)
+                self.MerCelluloseII_carboxylation_LineEdit.setVisible(False)
+                self.MerCelluloseII_carboxylation_pHLabel.setVisible(False)
+                self.MerCelluloseII_carboxylation_pHLineEdit.setVisible(False)
+                
+                
+                self.MerCelluloseII_sulfate_planeLabel.setVisible(False)
+                self.MerCelluloseII_sulfate_planeComboBox.setVisible(False)
+                self.MerCelluloseII_carboxylation_planeLabel.setVisible(False)
+                self.MerCelluloseII_carboxylation_planeComboBox.setVisible(False)
+    
+                self.MerCelluloseII_ForceFieldTypeLabel.setVisible(True)
+                self.MerCelluloseII_ForceFieldTypeselector.setVisible(True)
+                self.MerCelluloseII_invokeButton.setVisible(True)  # Show "Generate Structure" button
+        else:
+            self.MerCelluloseII_sulfate_Label.setVisible(False)
+            self.MerCelluloseII_sulfate_LineEdit.setVisible(False)
+            self.MerCelluloseII_sulfate_pHLabel.setVisible(False)
+            self.MerCelluloseII_sulfate_pHLineEdit.setVisible(False)
+            
+            self.MerCelluloseII_carboxylation_Label.setVisible(False)
+            self.MerCelluloseII_carboxylation_LineEdit.setVisible(False)
+             
+            self.MerCelluloseII_carboxylation_pHLabel.setVisible(False)
+            self.MerCelluloseII_carboxylation_pHLineEdit.setVisible(False)
+            
+            
+            self.MerCelluloseII_sulfate_planeLabel.setVisible(False)
+            self.MerCelluloseII_sulfate_planeComboBox.setVisible(False)
+            self.MerCelluloseII_carboxylation_planeLabel.setVisible(False)
+            self.MerCelluloseII_carboxylation_planeComboBox.setVisible(False)
+    
+    
+            self.MerCelluloseII_ForceFieldTypeLabel.setVisible(False)
+            self.MerCelluloseII_ForceFieldTypeselector.setVisible(False)
+            self.MerCelluloseII_invokeButton.setVisible(False)  
+
+
+
+    def MerCelluloseII_manageVisibilityAndStylesForsulfate(self, MerCelluloseII_sulfate_plane_selection):
+        #print("Current plane selection:", plane_selection)  # Debug print to check the selection
+        self.MerCelluloseII_sulfate_planeLabel.setVisible(True)
+        self.MerCelluloseII_sulfate_planeComboBox.setVisible(True)
+
+        self.MerCelluloseII_carboxylation_planeLabel.setVisible(False)
+        self.MerCelluloseII_carboxylation_planeComboBox.setVisible(False)
+        self.MerCelluloseII_sulfate_pHLineEdit.setReadOnly(True)
+        self.MerCelluloseII_sulfate_pHLineEdit.setStyleSheet("background-color: #D3D3D3;")
+
+        self.MerCelluloseII_sulfate_Label.setVisible(True)
+        self.MerCelluloseII_sulfate_LineEdit.setVisible(True)
+        self.MerCelluloseII_sulfate_pHLabel.setVisible(True)
+        self.MerCelluloseII_sulfate_pHLineEdit.setVisible(True)
+
+        self.MerCelluloseII_carboxylation_Label.setVisible(False)
+        self.MerCelluloseII_carboxylation_LineEdit.setVisible(False)
+        self.MerCelluloseII_carboxylation_pHLabel.setVisible(False)
+        self.MerCelluloseII_carboxylation_pHLineEdit.setVisible(False)
+        self.MerCelluloseII_ForceFieldTypeLabel.setVisible(True)
+        self.MerCelluloseII_ForceFieldTypeselector.setVisible(True)
+        self.MerCelluloseII_invokeButton.setVisible(True)
+    
+        if MerCelluloseII_sulfate_plane_selection in [ "Single (010) plane ",        
+                                                       "Two (010) planes", 
+                                                       "Single (100) plane,"
+                                                       "Two (100) planes",
+                                                       "Single (010) and (100) planes",                                                      
+                                                       "Both (010) and (100) planes"] :
+            self.MerCelluloseII_sulfate_LineEdit.setReadOnly(False)
+            self.MerCelluloseII_sulfate_LineEdit.setStyleSheet("background-color: white;")
+
+
+    def MerCelluloseII_manageVisibilityAndStylesForCarboxylation(self, MerCelluloseII_carboxylation_plane_selection):
+        #print("Current plane selection:", plane_selection)  # Debug print to check the selection
+        self.MerCelluloseII_sulfate_planeLabel.setVisible(False)
+        self.MerCelluloseII_sulfate_planeComboBox.setVisible(False)
+        self.MerCelluloseII_sulfate_pHLabel.setVisible(False)
+        self.MerCelluloseII_sulfate_pHLineEdit.setVisible(False)
+        self.MerCelluloseII_carboxylation_planeLabel.setVisible(True)
+        self.MerCelluloseII_carboxylation_planeComboBox.setVisible(True)
+        self.MerCelluloseII_sulfate_Label.setVisible(False)
+        self.MerCelluloseII_sulfate_LineEdit.setVisible(False)
+        self.MerCelluloseII_carboxylation_Label.setVisible(True)
+        self.MerCelluloseII_carboxylation_LineEdit.setVisible(True)
+        self.MerCelluloseII_carboxylation_pHLabel.setVisible(True)
+        self.MerCelluloseII_carboxylation_pHLineEdit.setVisible(True)
+        self.MerCelluloseII_ForceFieldTypeLabel.setVisible(True)
+        self.MerCelluloseII_ForceFieldTypeselector.setVisible(True)
+        self.MerCelluloseII_invokeButton.setVisible(True)
+    
+        if MerCelluloseII_carboxylation_plane_selection in  [  "Single (010) plane ",        
+                                                               "Two (010) planes", 
+                                                               "Single (100) plane,"
+                                                               "Two (100) planes",
+                                                               "Single (010) and (100) planes",
+                                                               "Both (010) and (100) planes"] :
+            self.MerCelluloseII_carboxylation_LineEdit.setReadOnly(False)
+            self.MerCelluloseII_carboxylation_LineEdit.setStyleSheet("background-color: white;")
+            self.MerCelluloseII_carboxylation_pHLineEdit.setReadOnly(False)
+            self.MerCelluloseII_carboxylation_pHLineEdit.setStyleSheet("background-color: white;")
+
+    def MerCelluloseII_invokeScript(self):
+            model = self.MerCelluloseII_ComboBox.currentText()
+            
+            if self.MerCelluloseII_Experimental.isChecked():
+                if  model == "Parallelogram cross-section shape":
+                    if self.MerCelluloseII_noModRadio.isChecked():
+                        MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                        MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                        MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                        if not MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                            QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                            return
+                        MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                        MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                        if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                            MerCelluloseII_script_name = "infinite_experiment.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_experiment.py"
+                            MerCelluloseII_shape_name = "crystallite"
+                            MerCelluloseII_folder_name = "charmm36"
+                        elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                            MerCelluloseII_script_name = "infinite_experiment.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_experiment.py"
+                            MerCelluloseII_shape_name = "crystallite"
+                            MerCelluloseII_folder_name = "glycam06"
+                        try:
+                            MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                            MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit]
+                            MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                            if MerCelluloseII_result.returncode == 0:
+                                MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                self.MerCelluloseII_exp_nochemical_Popup(MerCelluloseII_output)
+                                self.MerCelluloseII_exp_nochemical_Topology()                    
+                            else:
+                                error_message = MerCelluloseII_result.stderr.strip()
+                                QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                        except Exception as e:
+                            QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+                    #####MerCelluloseII------------- Parallelogram -----------------------==== carboxylation====
+                    elif self.MerCelluloseII_carboxylationRadio.isChecked():
+                        MerCelluloseII_carboxylation_plane_selection = self.MerCelluloseII_carboxylation_planeComboBox.currentText()
+                        if MerCelluloseII_carboxylation_plane_selection == "Both (010) and (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()
+                            if not MerCelluloseII_c_unit and carboxylation and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_experiment.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_experiment.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_experiment.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_experiment.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                        elif MerCelluloseII_carboxylation_plane_selection == "Single (010) plane":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()
+                            if not MerCelluloseII_c_unit and carboxylation and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                        elif MerCelluloseII_carboxylation_plane_selection == "Two (010) planes":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()
+                            if not MerCelluloseII_c_unit and carboxylation and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010-2.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010-2.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "cellulose-II Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                        elif MerCelluloseII_carboxylation_plane_selection == "Single (100) plane":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()
+                            if not MerCelluloseII_c_unit and carboxylation and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+                        elif MerCelluloseII_carboxylation_plane_selection == "Two (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()
+                            if not MerCelluloseII_c_unit and carboxylation and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100-2.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100-2.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+                        elif MerCelluloseII_carboxylation_plane_selection == "Single (010) and (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()
+                            if not MerCelluloseII_c_unit and carboxylation and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010_100.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010_100.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                    ######Mercerized CelluloseII------------- rectangle -----------------------==== sulfate====
+                    elif self.MerCelluloseII_sulfateRadio.isChecked():
+                        MerCelluloseII_sulfate_plane_selection = self.MerCelluloseII_sulfate_planeComboBox.currentText()
+     
+                        if MerCelluloseII_sulfate_plane_selection == "Single (010) plane":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+                            if not MerCelluloseII_c_unit and sulfate and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                            #    MerCelluloseII_script_name = "infinite_010.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010.py"
+                            #    MerCelluloseII_shape_name = "crystallite"
+                            #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                        elif MerCelluloseII_sulfate_plane_selection == "Two (010) planes":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+
+                            if not MerCelluloseII_c_unit and sulfate and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010-2.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                           #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                           #    MerCelluloseII_script_name = "infinite_010-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010-2.py"
+                           #    MerCelluloseII_shape_name = "crystallite"
+                           #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+                        elif MerCelluloseII_sulfate_plane_selection == "Single (100) plane":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+
+                            if not MerCelluloseII_c_unit and sulfate and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                           #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                           #    MerCelluloseII_script_name = "infinite_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100.py"
+                           #    MerCelluloseII_shape_name = "crystallite"
+                           #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+
+                        elif MerCelluloseII_sulfate_plane_selection == "Two (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+
+                            if not MerCelluloseII_c_unit and sulfate and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100-2.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                           #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                           #    MerCelluloseII_script_name = "infinite_100-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100-2.py"
+                           #    MerCelluloseII_shape_name = "crystallite"
+                           #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+                        elif MerCelluloseII_sulfate_plane_selection == "Single (010) and (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+
+                            if not MerCelluloseII_c_unit and sulfate and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010_100.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                           #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                           #    MerCelluloseII_script_name = "infinite_010_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010_100.py"
+                           #    MerCelluloseII_shape_name = "crystallite"
+                           #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")   
+
+
+                        elif MerCelluloseII_sulfate_plane_selection == "Both (010) and (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+
+                            if not MerCelluloseII_c_unit and sulfate and ph:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_experiment.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_experiment.py"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                           #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                           #    MerCelluloseII_script_name = "infinite_experiment.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_experiment.py"
+                           #    MerCelluloseII_shape_name = "crystallite"
+                           #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")   
+                                
+                                                                                             
+               
+            elif self.MerCelluloseII_UserDefined.isChecked():
+                if model == "Parallelogram cross-section shape":
+                    if self.MerCelluloseII_noModRadio.isChecked():
+                        MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                        MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                        MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                        MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                        MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                        MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                        MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+
+                        if not MerCelluloseII_c_unit:
+                            QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                            return
+                        MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                        MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                        if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                            MerCelluloseII_script_name = "infinite_ud.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_ud.py"
+                            MerCelluloseII_ud_folder = "user-defined"
+                            MerCelluloseII_shape_name = "crystallite"
+                            MerCelluloseII_folder_name = "charmm36"
+                        elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                            MerCelluloseII_script_name = "infinite_ud.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_ud.py"
+                            MerCelluloseII_ud_folder = "user-defined"
+                            MerCelluloseII_shape_name = "crystallite"
+                            MerCelluloseII_folder_name = "glycam06"
+                        try:
+                            MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                            MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit]  
+                            MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                            if MerCelluloseII_result.returncode == 0:
+                                MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                self.MerCelluloseII_exp_nochemical_Popup(MerCelluloseII_output)
+                                self.MerCelluloseII_exp_nochemical_Topology()                    
+                            else:
+                                error_message = MerCelluloseII_result.stderr.strip()
+                                QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                        except Exception as e:
+                            QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                    ##### ----user-defined ------ MerCelluloseII------------- Parallelogram -----------------------==== carboxylation====
+                    elif self.MerCelluloseII_carboxylationRadio.isChecked():
+                        MerCelluloseII_carboxylation_plane_selection = self.MerCelluloseII_carboxylation_planeComboBox.currentText()
+                        if MerCelluloseII_carboxylation_plane_selection == "Both (010) and (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()                            
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_experiment.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_experiment.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_experiment.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_experiment.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                        elif MerCelluloseII_carboxylation_plane_selection == "Single (010) plane":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()                            
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                        elif MerCelluloseII_carboxylation_plane_selection == "Two (010) planes":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()                            
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010-2.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010-2.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "cellulose-II Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                        elif MerCelluloseII_carboxylation_plane_selection == "Single (100) plane":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()                            
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+                        elif MerCelluloseII_carboxylation_plane_selection == "Two (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()                            
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100-2.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100-2.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+                        elif MerCelluloseII_carboxylation_plane_selection == "Single (010) and (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            carboxylation = self.MerCelluloseII_carboxylation_LineEdit.text()  
+                            ph = self.MerCelluloseII_carboxylation_pHLineEdit.text()                            
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010_100.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010_100.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "glycam06"
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-carboxylation", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, carboxylation, ph]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_carboxylation_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                    ######Mercerized CelluloseII------------- rectangle -----------------------==== sulfate====
+                    elif self.MerCelluloseII_sulfateRadio.isChecked():
+                        MerCelluloseII_sulfate_plane_selection = self.MerCelluloseII_sulfate_planeComboBox.currentText()
+     
+                        if MerCelluloseII_sulfate_plane_selection == "Single (010) plane":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+                                         
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                            #    MerCelluloseII_script_name = "infinite_010.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010.py"
+                            #    MerCelluloseII_ud_folder = "user-defined"
+                            #    MerCelluloseII_shape_name = "crystallite"
+                            #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+                        elif MerCelluloseII_sulfate_plane_selection == "Two (010) planes":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+                                            
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010-2.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                            #    MerCelluloseII_script_name = "infinite_010-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010-2.py"
+                            #    MerCelluloseII_ud_folder = "user-defined"
+                            #    MerCelluloseII_shape_name = "crystallite"
+                            #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+                        elif MerCelluloseII_sulfate_plane_selection == "Single (100) plane":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+                                   
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                            #    MerCelluloseII_script_name = "infinite_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100.py"
+                            #    MerCelluloseII_ud_folder = "user-defined"
+                            #    MerCelluloseII_shape_name = "crystallite"
+                            #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+
+                        elif MerCelluloseII_sulfate_plane_selection == "Two (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+                          
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_100-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100-2.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                            #    MerCelluloseII_script_name = "infinite_100-2.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100-2.py"
+                            #    MerCelluloseII_ud_folder = "user-defined"
+                            #    MerCelluloseII_shape_name = "crystallite"
+                            #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+                        elif MerCelluloseII_sulfate_plane_selection == "Single (010) and (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+                     
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_010_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_100_010_100.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                            #    MerCelluloseII_script_name = "infinite_010_100.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_010_100.py"
+                            #    MerCelluloseII_ud_folder = "user-defined"
+                            #    MerCelluloseII_shape_name = "crystallite"
+                            #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")   
+
+
+                        elif MerCelluloseII_sulfate_plane_selection == "Both (010) and (100) planes":                                                                                                                                          
+                            MerCelluloseII_a_parm = self.MerCelluloseII_aParam.text()
+                            MerCelluloseII_b_parm = self.MerCelluloseII_bParam.text()
+                            MerCelluloseII_c_parm = self.MerCelluloseII_cParam.text()       
+                            MerCelluloseII_gamma =  self.MerCelluloseII_gammaParam.text()             
+                            MerCelluloseII_a_unit = self.MerCelluloseII_aRepeatUnits.text()
+                            MerCelluloseII_b_unit = self.MerCelluloseII_bRepeatUnits.text()
+                            MerCelluloseII_c_unit = self.MerCelluloseII_cRepeatUnits.text()
+                            sulfate = self.MerCelluloseII_sulfate_LineEdit.text()  
+                           
+                            if not MerCelluloseII_a_parm and MerCelluloseII_c_parm and MerCelluloseII_b_parm and MerCelluloseII_a_unit and MerCelluloseII_b_unit and MerCelluloseII_c_unit:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all repeated unit parameters.")
+                                return
+                            MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+                            MerCelluloseII_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if MerCelluloseII_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                MerCelluloseII_script_name = "infinite_ud.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_ud.py"
+                                MerCelluloseII_ud_folder = "user-defined"
+                                MerCelluloseII_shape_name = "crystallite"
+                                MerCelluloseII_folder_name = "charmm36"
+                            #elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                            #    MerCelluloseII_script_name = "infinite_ud.py" if "Infinite" in MerCelluloseII_ForceFieldType else "finite_ud.py"
+                            #    MerCelluloseII_ud_folder = "user-defined"
+                            #    MerCelluloseII_shape_name = "crystallite"
+                            #    MerCelluloseII_folder_name = "glycam06"
+                            elif MerCelluloseII_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, sulfate cellulose doesn't support Glycam06 Force Field.")
+
+                            try:
+                                MerCelluloseII_script_path = os.path.join(MerCelluloseII_base_dir, "function", "cellulose-II-sulfate", MerCelluloseII_ud_folder, MerCelluloseII_shape_name, MerCelluloseII_folder_name, MerCelluloseII_script_name)
+                                MerCelluloseII_command = ["python", MerCelluloseII_script_path, MerCelluloseII_a_parm, MerCelluloseII_b_parm, MerCelluloseII_c_parm, MerCelluloseII_gamma, MerCelluloseII_a_unit, MerCelluloseII_b_unit, MerCelluloseII_c_unit, sulfate]
+
+                                MerCelluloseII_result = subprocess.run(MerCelluloseII_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if MerCelluloseII_result.returncode == 0:
+                                    MerCelluloseII_output = MerCelluloseII_result.stdout.strip()
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Popup(MerCelluloseII_output)
+                                    self.MerCelluloseII_exp_parallelogram_sulfate_Topology()                 
+                                else:
+                                    error_message = MerCelluloseII_result.stderr.strip()
+                                    QMessageBox.critical(self, "Mercerized CelluloseII Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.warning(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")   
+                                
+##Mercellulose-II experimental data no modification
+    def MerCelluloseII_exp_nochemical_Topology(self):  
+        MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        script_name = "cellulose-II_icm_topgen.py" if "Infinite" in MerCelluloseII_ForceFieldType else "cellulose-II_fcm_topgen.py"
+        folder_name_i = "glycam06" if "GLYCAM06" in MerCelluloseII_ForceFieldType else "charmm36"
+        folder_name_j = "cellulose-II"
+        folder_name_k = "crystallite"
+        script_path = os.path.join(base_dir, "topology", folder_name_i, folder_name_j, folder_name_k, script_name)
+        command = ["python", script_path]
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        if result.returncode == 0:
+            self.MerCelluloseII_exp_nochemical_TopologyPopup()
+        else:
+            QMessageBox.warning(self, "Mercerized Cellulose II  Topology Generation Failed")
+
+    def MerCelluloseII_exp_nochemical_Popup(self, message):
+        message = f"Mercerized Cellulose II was generated successfully"
+        QMessageBox.information(self, "Build Result", message)
+
+    def MerCelluloseII_exp_nochemical_TopologyPopup(self):
+        MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+        file_name = "glycam06" if "GLYCAM06" in MerCelluloseII_ForceFieldType else "CHARMM36"
+        message = f"{file_name} Topology File for Mercerized Cellulose II Generated Successfully."
+        QMessageBox.information(self, "Topology Build Result", message)
+
+
+## =======carboxylation=========== MerCelluloseII ===========parallelogram=========== experimental data windows output
+    def MerCelluloseII_exp_parallelogram_carboxylation_Topology(self):  
+        MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        script_name = "cellulose-II_icm_topgen.py" if "Infinite" in MerCelluloseII_ForceFieldType else "cellulose-II_fcm_topgen.py"
+        folder_name_i = "glycam06" if "GLYCAM06" in MerCelluloseII_ForceFieldType else "charmm36"
+        folder_name_j = "cellulose-II"
+        folder_name_k = "crystallite"
+        script_path = os.path.join(base_dir, "topology", folder_name_i, folder_name_j, folder_name_k, script_name)
+        try:
+            command = ["python", script_path]
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            if result.returncode == 0:
+                self.MerCelluloseII_exp_parallelogram_carboxylation_Topology_Popup()
+            else:
+                QMessageBox.warning(self, "Carboxylated Mercerized CelluloseII Topology Generation Failed")
+        except Exception as e:
+            QMessageBox.critical(self, "Carboxylated Mercerized CelluloseII Topology Generation Failed")
+
+    def MerCelluloseII_exp_parallelogram_carboxylation_Popup(self, MerCelluloseII_parallelogram_output):
+        lines = [line.strip() for line in MerCelluloseII_parallelogram_output.strip().split('\n') if line.strip()]
+        if not lines:
+            QMessageBox.warning(self, "Build Error", "No output received.")
+            return
+    
+        last_line = lines[-1]
+        parts = last_line.split(',')
+        carboxylation_in_charge_density = float(parts[0].split(':')[1].strip())  # Correct
+        carboxylation_degree = float(parts[1].split(':')[1].strip())  # Correct
+        ph = float(parts[2].split(':')[1].strip())   
+        carboxylation_formatted = "{:.2f}".format(carboxylation_in_charge_density)
+        carboxylation_degree_formatted = "{:.2f}".format(carboxylation_degree)
+        ph_formatted = "{:.2f}".format(ph)
+        message = f"Carboxylated Mercerized CelluloseII was Generated Successfully!\nActual charge density: {carboxylation_formatted} mmol/g \nActual carboxylation degree: {carboxylation_degree_formatted}\nActual pH level: {ph_formatted}"
+        QMessageBox.information(self, "Build Result", message)
+
+    def MerCelluloseII_exp_parallelogram_carboxylation_Topology_Popup(self):
+        MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+        file_name = "glycam06" if "GLYCAM06" in MerCelluloseII_ForceFieldType else "CHARMM36"
+        message = f"{file_name} Topology File for Carboxylated Mercerized CelluloseII Generated Successfully."
+        QMessageBox.information(self, "Topology Build Result", message)
+
+
+##========sulfate====== MerCelluloseII =========parallelogram========== data windows output
+    def MerCelluloseII_exp_parallelogram_sulfate_Topology(self):   
+        MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        script_name = "cellulose-II_icm_topgen.py" if "Infinite" in MerCelluloseII_ForceFieldType else "cellulose-II_fcm_topgen.py"
+        folder_name_i = "glycam06" if "GLYCAM06" in MerCelluloseII_ForceFieldType else "charmm36"
+        folder_name_j = "cellulose-II"
+        folder_name_k = "crystallite"
+        script_path = os.path.join(base_dir, "topology", folder_name_i, folder_name_j, folder_name_k, script_name)
+        try:
+            command = ["python", script_path]
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            if result.returncode == 0:
+                self.MerCelluloseII_exp_parallelogram_sulfate_Topology_Popup()
+            else:
+                QMessageBox.warning(self, "Sulfate Mercerized CelluloseII Topology Generation Failed")
+        except Exception as e:
+            QMessageBox.critical(self, "Sulfate Mercerized CelluloseII Topology Generation Failed")
+
+    def MerCelluloseII_exp_parallelogram_sulfate_Popup(self, MerCelluloseII_parallelogram_output):
+        lines = [line.strip() for line in MerCelluloseII_parallelogram_output.strip().split('\n') if line.strip()]
+        if not lines:
+            QMessageBox.warning(self, "Build Error", "No output received.")
+            return
+    
+        last_line = lines[-1]
+        parts = last_line.split(',')
+        sulfate_in_charge_density = float(parts[0].split(':')[1].strip())  # Correct
+        sulfate_degree = float(parts[1].split(':')[1].strip())  # Correct 
+        sulfate_formatted = "{:.2f}".format(sulfate_in_charge_density)
+        sulfate_degree_formatted = "{:.2f}".format(sulfate_degree)
+        message = f"Sulfate Mercerized CelluloseII was Generated Successfully!\nActual charge density: {sulfate_formatted} mmol/g \nActual sulfate degree: {sulfate_degree_formatted}"
+        QMessageBox.information(self, "Build Result", message)
+
+    def MerCelluloseII_exp_parallelogram_sulfate_Topology_Popup(self):
+        MerCelluloseII_ForceFieldType = self.MerCelluloseII_ForceFieldTypeselector.currentText()
+        file_name = "glycam06" if "GLYCAM06" in MerCelluloseII_ForceFieldType else "CHARMM36"
+        message = f"{file_name} Topology File for Sulfate Mercerized CelluloseII Generated Successfully."
+        QMessageBox.information(self, "Topology Build Result", message)
+
 #----------------------cellulose-II------------------------------
   
 ############################################################cellulose_building#########################################################
@@ -11138,18 +12812,18 @@ class ModelViewer(QMainWindow):
 
 ##----------------------------------------------------------------alpha-chitin building-----------------------------------------------------
     def populateAlphaChitinTab(self, tab):
-        mainLayout = QVBoxLayout(tab)  # Primary layout to arrange content vertically
+        Alpha_mainLayout = QVBoxLayout(tab)  # Primary layout to arrange content vertically
     
         # Top-left alignment for the container
-        topLayout = QHBoxLayout()  # Use horizontal layout for top-aligned items
-        topLayout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # Align content to the top left
+        Alpha_topLayout = QHBoxLayout()  # Use horizontal layout for top-aligned items
+        Alpha_topLayout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # Align content to the top left
    
         Alpha_font = QFont("Arial", 13)
     
         # Label for the dropdown
-        label = QLabel("Please select the crystal structure to build α-chitin crystallite:")
-        label.setFont(Alpha_font)
-        topLayout.addWidget(label)  # Add label to the horizontal layout
+        Alpha_label = QLabel("Please select the crystal structure to build α-chitin crystallite:")
+        Alpha_label.setFont(Alpha_font)
+        Alpha_topLayout.addWidget(Alpha_label)  # Add label to the horizontal layout
         Alpha_comboBox = QComboBox()
         Alpha_comboBox.setFont(Alpha_font)
         Alpha_comboBox.addItem("Select here")  # Initial empty selection
@@ -11157,16 +12831,16 @@ class ModelViewer(QMainWindow):
         Alpha_comboBox.addItem("α-chitin-B")
         Alpha_comboBox.addItem("α-chitin-AB")
         Alpha_comboBox.currentIndexChanged.connect(self.updateAlphaChitinOptions)
-        topLayout.addWidget(Alpha_comboBox)  # Add combo box to the horizontal layout
+        Alpha_topLayout.addWidget(Alpha_comboBox)  # Add combo box to the horizontal layout
     
-        mainLayout.addLayout(topLayout)  # Add the top horizontal layout to the main vertical layout
+        Alpha_mainLayout.addLayout(Alpha_topLayout)  # Add the top horizontal layout to the main vertical layout
     
         self.AlphaStackedWidget = QStackedWidget()
         self.AlphaStackedWidget.addWidget(QWidget())  # Add an empty widget for the "Select here" option
         self.setupAlphaAOptions()  # Setup options for α-chitin-A
         self.setupAlphaBOptions()  # Setup options for α-chitin-B
         self.setupAlphaABOptions()  # Setup options for α-chitin-B
-        mainLayout.addWidget(self.AlphaStackedWidget)  # Add the stacked widget to the main vertical layout
+        Alpha_mainLayout.addWidget(self.AlphaStackedWidget)  # Add the stacked widget to the main vertical layout
 
     def updateAlphaChitinOptions(self, index):
         #print("Selected index in Alpha ComboBox:", index)
@@ -20522,30 +22196,30 @@ class ModelViewer(QMainWindow):
 
 ##----------------------------------------------------------------beta-chitin building------------------------------------------------------
     def populateBetaChitinTab(self, tab):
-         mainLayout = QVBoxLayout(tab)  # Primary layout to arrange content vertically
+         betachitin_mainLayout = QVBoxLayout(tab)  # Primary layout to arrange content vertically
      
-         topLayout = QHBoxLayout()  # Use horizontal layout for top-aligned items
-         topLayout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # Align content to the top left
-         font = QFont("Arial", 13)
-         label = QLabel("Please select the crystal structure to build β-chitin crystallite:")
-         label.setFont(font)
-         topLayout.addWidget(label)  
+         betachitin_topLayout = QHBoxLayout()  # Use horizontal layout for top-aligned items
+         betachitin_topLayout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # Align content to the top left
+         betachitin_font = QFont("Arial", 13)
+         betachitin_label = QLabel("Please select the crystal structure to build β-chitin crystallite:")
+         betachitin_label.setFont(betachitin_font)
+         betachitin_topLayout.addWidget(betachitin_label)  
  
          betachitin_comboBox = QComboBox()
-         betachitin_comboBox.setFont(font)
+         betachitin_comboBox.setFont(betachitin_font)
          betachitin_comboBox.addItem("Select here")  
          betachitin_comboBox.addItem("Anhydrous state")
          betachitin_comboBox.addItem("Dihydrous state")
          betachitin_comboBox.currentIndexChanged.connect(self.updateBetaChitinOptions)
-         topLayout.addWidget(betachitin_comboBox) 
+         betachitin_topLayout.addWidget(betachitin_comboBox) 
 
-         mainLayout.addLayout(topLayout)
+         betachitin_mainLayout.addLayout(betachitin_topLayout)
  
          self.betaStackedWidget = QStackedWidget()    ############
          self.betaStackedWidget.addWidget(QWidget())  ########## Add an empty widget for the "Select here" option
          self.setupBetaChitinOptions()  
          self.setupBetaChitin_dihydrous_Options()   
-         mainLayout.addWidget(self.betaStackedWidget)
+         betachitin_mainLayout.addWidget(self.betaStackedWidget)
 
 
 
@@ -20586,7 +22260,7 @@ class ModelViewer(QMainWindow):
         betachitin_bottomLineLayout.addWidget(self.betachitin_UserDefined)
 
         betachitin_layout.addLayout(betachitin_bottomLineLayout)
-        betachitin_layout.addLayout(betachitin_bottomLineLayout)
+        #betachitin_layout.addLayout(betachitin_bottomLineLayout)
 
 
         # Combo box setup
@@ -24400,10 +26074,10 @@ class ModelViewer(QMainWindow):
         Chitin_bundleTab = QWidget()
 
         self.populateCel_BundleTab(Cellulose_bundleTab)
-        self.populateChu_BundleTab(Chitin_bundleTab)
+        #self.populateChu_BundleTab(Chitin_bundleTab)
 
         self.bundleTab.addTab(Cellulose_bundleTab, "Cellulose Bundles")
-        self.bundleTab.addTab(Chitin_bundleTab, "Chitin Bundles")
+        #self.bundleTab.addTab(Chitin_bundleTab, "Chitin Bundles")
         self.bundleTab.setStyle(QStyleFactory.create('Fusion'))
         self.bundleTab.tabBar().setExpanding(False) 
         self.updateTabWidths()  
@@ -24883,12 +26557,12 @@ class ModelViewer(QMainWindow):
 
 
 ###bundle chitin
-    def populateChu_BundleTab(self, tab):
-        Chi_bundle_mainLayout = QVBoxLayout(tab)  # Primary layout to arrange content vertically
-        Chi_bundle_topLayout = QHBoxLayout()  # Use horizontal layout for top-aligned items
-        Chi_bundle_topLayout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # Align content to the top left
-   
-        Chi_bundle_font = QFont("Arial", 13)
+    #def populateChu_BundleTab(self, tab):
+    #    Chi_bundle_mainLayout = QVBoxLayout(tab)  # Primary layout to arrange content vertically
+    #    Chi_bundle_topLayout = QHBoxLayout()  # Use horizontal layout for top-aligned items
+    #    Chi_bundle_topLayout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # Align content to the top left
+   #
+    #    Chi_bundle_font = QFont("Arial", 13)
 #############################################################Bundle_building##########################################################
 
 

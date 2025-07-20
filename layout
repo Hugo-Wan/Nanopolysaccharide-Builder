@@ -13,6 +13,7 @@ project_directory/
 │   ├── cellulose
 │   │   ├── cellulose_I_alpha_unit.pdb
 │   │   ├── cellulose_I_beta_unit.pdb
+│   │   ├── Mercerized cellulose_II.pdb
 │   ├── chitin
 │   │   ├── chitosan_unit.pdb
 │   │   ├── alpha-chitin_unit.pdb
