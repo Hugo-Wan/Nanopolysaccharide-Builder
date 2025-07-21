@@ -23747,8 +23747,8 @@ class ModelViewer(QMainWindow):
                                 betachitin_result = subprocess.run(betachitin_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                                 if betachitin_result.returncode == 0:
                                     betachitin_output = betachitin_result.stdout.strip()
-                                    self.betachitin_exp_rectangle_carboxylation_Popup(betachitin_output)
-                                    self.betachitin_exp_rectangle_carboxylation_Topology()                    
+                                    self.betachitin_paralellogram_carboxylation_Popup(betachitin_output)
+                                    self.betachitin_paralellogram_carboxylation_Topology()                  
                                 else:
                                     error_message = betachitin_result.stderr.strip()
                                     QMessageBox.critical(self, "β-chitin Parameter Error", error_message)  
@@ -23784,8 +23784,8 @@ class ModelViewer(QMainWindow):
                                 betachitin_result = subprocess.run(betachitin_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                                 if betachitin_result.returncode == 0:
                                     betachitin_output = betachitin_result.stdout.strip()
-                                    self.betachitin_exp_rectangle_carboxylation_Popup(betachitin_output)
-                                    self.betachitin_exp_rectangle_carboxylation_Topology()                    
+                                    self.betachitin_paralellogram_carboxylation_Popup(betachitin_output)
+                                    self.betachitin_paralellogram_carboxylation_Topology()                    
                                 else:
                                     error_message = betachitin_result.stderr.strip()
                                     QMessageBox.critical(self, "β-chitin Parameter Error", error_message)  
@@ -23822,8 +23822,8 @@ class ModelViewer(QMainWindow):
                                 betachitin_result = subprocess.run(betachitin_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                                 if betachitin_result.returncode == 0:
                                     betachitin_output = betachitin_result.stdout.strip()
-                                    self.betachitin_exp_rectangle_carboxylation_Popup(betachitin_output)
-                                    self.betachitin_exp_rectangle_carboxylation_Topology()                    
+                                    self.betachitin_paralellogram_carboxylation_Popup(betachitin_output)
+                                    self.betachitin_paralellogram_carboxylation_Topology()                     
                                 else:
                                     error_message = betachitin_result.stderr.strip()
                                     QMessageBox.critical(self, "β-chitin Parameter Error", error_message)  
@@ -23858,8 +23858,8 @@ class ModelViewer(QMainWindow):
                                 betachitin_result = subprocess.run(betachitin_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                                 if betachitin_result.returncode == 0:
                                     betachitin_output = betachitin_result.stdout.strip()
-                                    self.betachitin_exp_rectangle_carboxylation_Popup(betachitin_output)
-                                    self.betachitin_exp_rectangle_carboxylation_Topology()                    
+                                    self.betachitin_paralellogram_carboxylation_Popup(betachitin_output)
+                                    self.betachitin_paralellogram_carboxylation_Topology()                  
                                 else:
                                     error_message = betachitin_result.stderr.strip()
                                     QMessageBox.critical(self, "β-chitin Parameter Error", error_message)  
@@ -23894,8 +23894,8 @@ class ModelViewer(QMainWindow):
                                 betachitin_result = subprocess.run(betachitin_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                                 if betachitin_result.returncode == 0:
                                     betachitin_output = betachitin_result.stdout.strip()
-                                    self.betachitin_exp_rectangle_carboxylation_Popup(betachitin_output)
-                                    self.betachitin_exp_rectangle_carboxylation_Topology()                    
+                                    self.betachitin_paralellogram_carboxylation_Popup(betachitin_output)
+                                    self.betachitin_paralellogram_carboxylation_Topology()                    
                                 else:
                                     error_message = betachitin_result.stderr.strip()
                                     QMessageBox.critical(self, "β-chitin Parameter Error", error_message)  

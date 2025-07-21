@@ -307,19 +307,11 @@ def adjust_for_carboxylation_limit(initial_carboxylation_num):
 
 carboxylation_num = adjust_for_carboxylation_limit(n_coo)
 
-
-
-
 if carboxylation_num > 0:
-    left_010_count=0
-    right_010_count=0
-    upper_120_count=0
-    bottom_120_count=0
-    for i in range(1, carboxylation_num + 1):
-            left_010_count += 1
-
-    
     left_010_count=carboxylation_num
+    
+    
+    new_carboxylation_num=carboxylation_num
 
     planes_010_left_count=(planes_010_left[-1] - planes_010_left[0] + 1)
     planes_010_right_count=(planes_010_right[-1] - planes_010_right[0] + 1)
@@ -332,16 +324,18 @@ if carboxylation_num > 0:
     
     max_120_count_upper = c_iterations * 2 * planes_120_upper_count
     max_120_count_bottom = c_iterations * 2 * planes_120_bottom_count
-    right_010_count_update = right_010_count
+    
+    left_010_count_update = left_010_count
+
+
     if left_010_count > max_010_count_left:
         left_010_count_update = max_010_count_left
-
-
+    
+  
         
-    new_carboxylation_number_update= left_010_count_update
+    new_carboxylation_number_update= left_010_count_update 
     actual_ds=(new_carboxylation_number_update)/(total_residues)
     actual_carboxylate_content=Tempo_target*(actual_ds/ds)
-
 
     actual_carboxylate_rounded=round(actual_carboxylate_content,4)
     #print('surface charge density', actual_carboxylate_rounded, 'mmol/g')
