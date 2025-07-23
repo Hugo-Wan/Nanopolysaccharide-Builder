@@ -75,7 +75,7 @@ For **Linux users**, installation can be completed using **Conda**. We recommend
 
 ````
 # Create a new environment with Python 3.10
-conda create --name npb python=3.10 (optional)
+conda create --name npb python=3.10 requests (optional)
 
 # Activate the environment
 conda activate npb (optional)
