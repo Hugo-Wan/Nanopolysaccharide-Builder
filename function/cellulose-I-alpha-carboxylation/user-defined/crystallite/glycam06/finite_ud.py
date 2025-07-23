@@ -18,7 +18,6 @@ import sys
 import re
 warnings.filterwarnings("ignore", category=UserWarning)
 
-
 try:
     a_trans = float(sys.argv[1])
     b_trans = float(sys.argv[2])
@@ -94,8 +93,8 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 main_folder_path = config['main_folder_path']
 # Construct the path to the unit file
-neutron_pdb_1 = os.path.join(main_folder_path, 'structure', 'cellulose_I_alpha', 'glycam06', 'chain.pdb')
-user_defined_pdb_1 = os.path.join(main_folder_path, 'structure', 'cellulose_I_alpha', 'glycam06', 'chain_ud.pdb')
+neutron_pdb_1 = os.path.join(main_folder_path, 'structure', 'cellulose_I_alpha', 'glycam06', 'chain-finite.pdb')
+user_defined_pdb_1 = os.path.join(main_folder_path, 'structure', 'cellulose_I_alpha', 'glycam06', 'chain-finite_ud.pdb')
 
 if os.path.exists(user_defined_pdb_1):
     unit_chain_input_file_1 = user_defined_pdb_1
@@ -104,14 +103,12 @@ else:
 
 
 chain_1_u = mda.Universe(unit_chain_input_file_1)
-
-#chain_1 assembly    
 #------------------------------------------------------------------------------
 chain_1_strand = []
 for chain_1_i in range(1, c_iterations + 1):
     chain_1_u.atoms.positions += [c_trans, 0, 0]
-    resid_1 = (c_iterations - chain_1_i + 1) * 2 - 1
-    resid_2 = (c_iterations - chain_1_i + 1) * 2
+    resid_1 = (c_iterations - chain_1_i + 1) * 2 
+    resid_2 = (c_iterations - chain_1_i + 1) * 2 + 1
     for j, atom in enumerate(chain_1_u.atoms):
         if j < 21:
             atom.residue.resid = resid_1
@@ -129,13 +126,81 @@ with open("chain_1_temp.pdb", "w") as chain_1_structure:
                     chain_1_structure.write(chain_1_line)
             os.remove(chain_1_output) 
 
-chain_1_combined=mda.Universe("chain_1_temp.pdb")
-for atom in chain_1_combined.atoms:
+ ##terminal side            
+chain_1_finite_build_chain = "chain_1_temp.pdb"
+chain_1_finite_u = mda.Universe(chain_1_finite_build_chain)
+chain_1_first_atom = chain_1_finite_u.atoms[0]
+chain_1_o4_atoms = chain_1_finite_u.select_atoms("name O4")
+chain_1_h4_atoms = chain_1_finite_u.select_atoms("name H4")
+if not chain_1_o4_atoms:
+    raise ValueError("No atoms named 'O4' found in the structure.")
+chain_1_last_o4 = chain_1_o4_atoms[-1]
+chain_1_last_h4 = chain_1_h4_atoms[-1]
+
+
+chain_1_new_positions_ROH = {
+    'O1': chain_1_first_atom.position +  [1.291, -0.166, -0.593],
+    'HO1': chain_1_first_atom.position + [1.969, -0.022,  0.060],
+}
+
+chain_1_new_positions_0GB= {
+    'O4':chain_1_last_o4.position,
+    'H4O': chain_1_last_o4.position + [0.377, -0.192, -0.892]
+}
+
+
+chain_1_new_atoms_ROH = {}
+for name, pos in chain_1_new_positions_ROH.items():
+    if chain_1_first_atom.name in ['O1', 'HO1']:
+        chain_1_base_atom = chain_1_first_atom
+    else:
+        chain_1_base_atom = chain_1_finite_u.atoms[0]  
+    chain_1_new_uni = mda.Universe.empty(n_atoms=1, trajectory=True)
+    chain_1_new_uni.add_TopologyAttr('name', [name])
+    chain_1_new_uni.add_TopologyAttr('type', [chain_1_base_atom.type])
+    chain_1_new_uni.add_TopologyAttr('resname', ['ROH'])
+    chain_1_new_uni.add_TopologyAttr('resid', ['1'])
+    chain_1_new_uni.add_TopologyAttr('segid', ['0'])
+    chain_1_new_uni.atoms.positions = [pos]
+    chain_1_new_atoms_ROH[name] = chain_1_new_uni
+
+chain_1_new_atoms_0GB = {}
+for name, pos in chain_1_new_positions_0GB.items():
+    chain_1_base_atom = chain_1_last_o4  # Using the last O4 for properties
+    chain_1_new_uni = mda.Universe.empty(n_atoms=1, trajectory=True)
+    chain_1_new_uni.add_TopologyAttr('name', [name])
+    chain_1_new_uni.add_TopologyAttr('type', [chain_1_base_atom.type])
+    chain_1_new_uni.add_TopologyAttr('resname', ['4GB'])  # Resname set to '0GB' as specified
+    chain_1_new_uni.add_TopologyAttr('resid', [chain_1_base_atom.resid])
+    chain_1_new_uni.add_TopologyAttr('segid', ['0'])
+    chain_1_new_uni.atoms.positions = [pos]
+    chain_1_new_atoms_0GB[name] = chain_1_new_uni
+
+
+chain_1_combined = Merge(chain_1_finite_u.atoms[:chain_1_last_h4.index + 1], chain_1_new_atoms_0GB['O4'].atoms, chain_1_finite_u.atoms[chain_1_last_h4.index + 1:])
+chain_1_combined = Merge(chain_1_combined.atoms[:chain_1_last_h4.index + 2], chain_1_new_atoms_0GB['H4O'].atoms, chain_1_combined.atoms[chain_1_last_h4.index + 2:])
+
+chain_1_combined = Merge(chain_1_new_atoms_ROH['HO1'].atoms, chain_1_combined.atoms)
+chain_1_combined = Merge(chain_1_combined.atoms[:1], chain_1_new_atoms_ROH['O1'].atoms, chain_1_combined.atoms[1:])
+chain_1_all_o4_atoms = chain_1_combined.select_atoms("name O4")
+chain_1_last_o4_to_remove = chain_1_all_o4_atoms[-1]
+chain_1_atoms_to_keep = chain_1_combined.select_atoms("not (index %d)" % chain_1_last_o4_to_remove.index)
+chain_1_atoms_to_keep.write("chain_1_temp.2.pdb")
+
+
+chain_1_final=mda.Universe("chain_1_temp.2.pdb")
+for atom in chain_1_final.residues[-3:].atoms:  
+    atom.residue.resname = '0GB'
+
+
+
+for atom in chain_1_final.atoms:
     atom.segment.segid = '0'  
-    elements = [atom.name[0] for atom in chain_1_combined.atoms]
-    chain_1_combined.add_TopologyAttr(Elements(elements))
-chain_1_combined.atoms.write("chain_1_temp.2.pdb")
+    elements = [atom.name[0] for atom in chain_1_final.atoms]
+    chain_1_final.add_TopologyAttr(Elements(elements))
+chain_1_final.atoms.write("chain_1_temp.2.pdb")
 #------------------------------------------------------------------------------
+
 
 
 ##--------------------
@@ -180,7 +245,7 @@ z_dir_vertical_to_screen = -1 *  math.sqrt(b_trans**2 - (h**2))
 chain_1_1st_layer_input_file = "chain_1_temp.2.pdb"
 chain_1_1st_layer_u = mda.Universe(chain_1_1st_layer_input_file)
 chain_1_1st_layer = []  
-for i in range(1, b_iterations+1):
+for i in range(1, a_iterations+1):
     chain_1_1st_layer_u.atoms.positions += [ a_par_vertical_to_screen_move_1, a_par_vertical_move_1, 0]
 
     segid_increment_value = 1 
@@ -209,7 +274,7 @@ chain_1_sheet = []
 
 chain_1_base_universe = mda.Universe(chain_1_sheet_input_file)
 
-for j in range(1, a_iterations+1):
+for j in range(1, b_iterations+1):
     chain_1_sheet_u = chain_1_base_universe.copy()
 
     translation_vector = [z_dir_vertical_to_screen*(j) ,
@@ -219,7 +284,7 @@ for j in range(1, a_iterations+1):
 
     chain_1_sheet_u.atoms.positions += translation_vector
 
-    segid_increment_value = (j-1)* b_iterations 
+    segid_increment_value = (j-1)* a_iterations 
     for segid, group in chain_1_sheet_u.atoms.groupby('segids').items():
         new_segid = str(int(segid) + segid_increment_value)
         for atom in group:
@@ -359,14 +424,19 @@ if carboxylation_num > 0:
 
 
     new_carboxylation_number_update=left_010_count_update + right_010_count_update + left_100_count_update + right_100_count_update 
+    #print(new_carboxylation_number_update)
+    #print(total_residues)
     actual_ds=(new_carboxylation_number_update)/(total_residues)
     actual_carboxylate_content=Tempo_target*(actual_ds/ds)
+    #print(actual_ds)
+    #print(actual_carboxylate_content)
     actual_carboxylate_rounded=round(actual_carboxylate_content,4)
+    #print('surface charge density', actual_carboxylate_rounded, 'mmol/g')
 
-    even_numbers = [x for x in range(1, 2 * c_iterations + 1) if x % 2 == 0]
-    odd_numbers = [x for x in range(1, 2 * c_iterations + 1) if x % 2 == 1]
-    all_combinations_010_left = [(value1, value2) for value1 in planes_010_left  for value2 in odd_numbers]
-    all_combinations_010_right = [(value1, value2) for value1 in planes_010_right  for value2 in even_numbers]
+    even_numbers = [x for x in range(2, 2 * c_iterations + 2) if x % 2 == 0]
+    odd_numbers = [x for x in range(2, 2 * c_iterations + 2) if x % 2 == 1]
+    all_combinations_010_left = [(value1, value2) for value1 in planes_010_left  for value2 in even_numbers]
+    all_combinations_010_right = [(value1, value2) for value1 in planes_010_right  for value2 in odd_numbers ]
     random.shuffle(all_combinations_010_left)
     random.shuffle(all_combinations_010_right)
     sel_010_left_array = []
@@ -387,8 +457,8 @@ if carboxylation_num > 0:
         sel_010_right_array.append(selected_combination_010_right)
         all_combinations_010_right.remove(selected_combination_010_right)
 
-    all_combinations_100_left = [(value1, value2) for value1 in planes_100_left  for value2 in odd_numbers]
-    all_combinations_100_right = [(value1, value2) for value1 in planes_100_right  for value2 in even_numbers]
+    all_combinations_100_left = [(value1, value2) for value1 in planes_100_left  for value2 in even_numbers]
+    all_combinations_100_right = [(value1, value2) for value1 in planes_100_right  for value2 in odd_numbers ]
     random.shuffle(all_combinations_100_left)
     random.shuffle(all_combinations_100_right)
     sel_100_left_array = []
@@ -444,6 +514,7 @@ if carboxylation_num > 0:
     
         return universe
     
+    
     all_indices = [left_glc_010_candidates_indices, right_glc_010_candidates_indices, 
                    left_glc_100_candidates_indices, right_glc_100_candidates_indices]
     ###chain_u is the unmodified structure, with name of "alpha-chitin.temp.pdb"
@@ -469,33 +540,43 @@ if carboxylation_num > 0:
     coo_atoms = list(primary_hydroxyl_remove_chains_u.atoms)#
 
     def add_coo_based_on_indices(universe, indices_lists):
-        all_new_atoms = []  
+        all_new_atoms = []  # This will store all newly created atoms across all modifications
         for index_ranges in indices_lists:
             for start_idx, end_idx in index_ranges:
                 residues = universe.select_atoms(f"index {start_idx}:{end_idx}").residues
                 fragment_number = get_fragment(primary_hydroxyl_remove_chains, start_idx, end_idx)
+                #print("staring from to the end:",start_idx, end_idx)
+                #print("fragment number is :", fragment_number )
+                #print("residue is : ", residues)
                 for residue in residues:
-                    residue.resname = '4ZB'
-                    base_atom_index = 5  
+                    if residue.resid == maximum_resid_num :
+                       #print("0zb")
+                       residue.resname = '0ZB'
+                       base_atom_index = 5   
+                    else :
+                       #print("middle")
+                       residue.resname = '4ZB'
+                       base_atom_index = 5  
                     base_atom = residue.atoms[base_atom_index]
+                    #print(base_atom)
                     coo_new_positions = {} 
                     # Define new positions based on residue ID's odd/even status
-                    if residue.resid % 2 == 1  and fragment_number in planes_100_left:  # Odd residue ID
+                    if residue.resid % 2 == 0  and fragment_number in planes_100_left:  # Odd residue ID
                         coo_new_positions = {
                             'O6B': base_atom.position + np.array([ 1.345,  -0.473,  -0.114]),
                             'O6A': base_atom.position + np.array([-1.093,  -0.896,  -0.216])
                         }
-                    elif residue.resid % 2 == 0  and fragment_number in planes_100_right:  # Even residue ID
+                    elif residue.resid % 2 == 1  and fragment_number in planes_100_right:  # Even residue ID
                         coo_new_positions = {
                             'O6B': base_atom.position + np.array([ 1.093,   0.896,  -0.216]),
                             'O6A': base_atom.position + np.array([-1.345,   0.473,  -0.114])
                         }
-                    elif residue.resid % 2 == 1  and fragment_number in planes_010_left:  # Odd residue ID
+                    elif residue.resid % 2 == 0  and fragment_number in planes_010_left:  # Odd residue ID
                         coo_new_positions = {
                             'O6B': base_atom.position + np.array([ 1.345,  -0.473,  -0.114]),
                             'O6A': base_atom.position + np.array([-1.093,  -0.896,  -0.216])
                         }
-                    elif residue.resid % 2 == 0  and fragment_number in planes_010_right:  # Even residue ID
+                    elif residue.resid % 2 == 1  and fragment_number in planes_010_right:  # Even residue ID
                         coo_new_positions = {
                             'O6B': base_atom.position + np.array([ 1.093,   0.896,  -0.216]),
                             'O6A': base_atom.position + np.array([-1.345,   0.473,  -0.114])
@@ -531,7 +612,7 @@ if carboxylation_num > 0:
     u_final.dimensions = [box_x, box_y, box_z, 90, 90, 90]
     translation_vector = center_of_box - center_of_mass
     u_final.atoms.translate(translation_vector)
-    with mda.Writer(f"glycam06-cellulose-Ialpha-icm.pdb", n_atoms=u_final.atoms.n_atoms, reindex=True, ) as W:
+    with mda.Writer(f"glycam06-cellulose-Ialpha-fcm.pdb", n_atoms=u_final.atoms.n_atoms, reindex=True, ) as W:
         W.write(u_final.atoms)
         
     for temp_file in glob.glob("*temp*.pdb"):
@@ -549,7 +630,7 @@ elif carboxylation_num == 0:
     center_of_box = [box_x / 2, box_y / 2, box_z / 2]
     u_final.dimensions = [box_x, box_y, box_z, 90, 90, 90]
     translation_vector = center_of_box - center_of_mass
-    with mda.Writer(f"glycam06-cellulose-Ialpha-icm.pdb", n_atoms=u_final.atoms.n_atoms, reindex=True, ) as W:
+    with mda.Writer(f"glycam06-cellulose-Ialpha-fcm.pdb", n_atoms=u_final.atoms.n_atoms, reindex=True, ) as W:
         W.write(u_final.atoms)
     
 

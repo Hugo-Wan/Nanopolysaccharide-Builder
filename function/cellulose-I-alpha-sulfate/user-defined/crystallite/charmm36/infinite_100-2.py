@@ -197,7 +197,7 @@ except ValueError as e:
 chain_1_1st_layer_input_file = "chain_1_temp.2.pdb"
 chain_1_1st_layer_u = mda.Universe(chain_1_1st_layer_input_file)
 chain_1_1st_layer = []  
-for i in range(1, b_iterations+1):
+for i in range(1, a_iterations+1):
     chain_1_1st_layer_u.atoms.positions += [ a_par_vertical_to_screen_move_1, a_par_vertical_move_1, 0]
 
     segid_increment_value = 1 
@@ -226,7 +226,7 @@ chain_1_sheet = []
 
 chain_1_base_universe = mda.Universe(chain_1_sheet_input_file)
 
-for j in range(1, a_iterations+1):
+for j in range(1, b_iterations+1):
     chain_1_sheet_u = chain_1_base_universe.copy()
 
     translation_vector = [z_dir_vertical_to_screen*(j) ,
@@ -236,7 +236,7 @@ for j in range(1, a_iterations+1):
 
     chain_1_sheet_u.atoms.positions += translation_vector
 
-    segid_increment_value = (j-1)* b_iterations 
+    segid_increment_value = (j-1)* a_iterations 
     for segid, group in chain_1_sheet_u.atoms.groupby('segids').items():
         new_segid = str(int(segid) + segid_increment_value)
         for atom in group:
