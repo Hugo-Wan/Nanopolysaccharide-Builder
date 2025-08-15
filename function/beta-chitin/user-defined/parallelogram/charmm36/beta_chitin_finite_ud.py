@@ -64,8 +64,8 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 main_folder_path = config['main_folder_path']
 # Construct the path to the unit file
-xray_pdb = os.path.join(main_folder_path, 'structure', 'beta_chitin', 'charmm36', 'unit-xray.pdb')
-user_defined_pdb = os.path.join(main_folder_path, 'structure', 'beta_chitin', 'charmm36', 'unit-xray-ud.pdb')
+xray_pdb = os.path.join(main_folder_path, 'structure', 'beta_chitin', 'charmm36', 'unit-neutron.pdb')
+user_defined_pdb = os.path.join(main_folder_path, 'structure', 'beta_chitin', 'charmm36', 'unit-neutron-ud.pdb')
 
 if os.path.exists(user_defined_pdb):
     unit_chain_input_file = user_defined_pdb

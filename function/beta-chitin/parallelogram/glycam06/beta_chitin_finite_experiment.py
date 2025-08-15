@@ -58,7 +58,7 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 main_folder_path = config['main_folder_path']
 # Construct the path to the unit file
-unit_chain_input_file = os.path.join(main_folder_path, 'structure', 'beta_chitin', 'glycam06', 'unit-xray-finite.pdb')
+unit_chain_input_file = os.path.join(main_folder_path, 'structure', 'beta_chitin', 'glycam06', 'unit-neutron-finite.pdb')
 
 unit_u = mda.Universe(unit_chain_input_file)
 
