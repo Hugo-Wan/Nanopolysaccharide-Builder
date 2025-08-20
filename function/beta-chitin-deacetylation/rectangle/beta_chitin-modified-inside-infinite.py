@@ -22,11 +22,11 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 #-------------------------------------------- modified parameter  --------------------------------------------------
 
-a_trans = 4.749 
-b_trans = 18.89
-c_trans = 10.33
 
-
+a_trans     = 4.819 
+b_trans     = 9.238976
+c_trans     = 10.384001
+gamma_angle = 97.156586
 
 
 try:
@@ -52,175 +52,101 @@ except ValueError:
     sys.stderr.write("Error: Invalid input. Please ensure all values are numeric and within the valid ranges.\n")
     sys.exit(1)            # pH condition
 
-#DDA_target=0.20               
 
-pKa=6.3                        #pka of chitosan  ref:doi.org/10.1016/j.foodhyd.2022.108383
-m_GlcNAc = 204.20              # GlcNAc unit mass
-m_Glc = 179.17                 # Glc unit mass
-#-------------------------------------------- modified parameter  --------------------------------------------------
-
-
-
-
-#-------------------------------------------------- native chitin built ----------------------------------------------
 with open('config.json', 'r') as f:
     config = json.load(f)
 main_folder_path = config['main_folder_path']
 # Construct the path to the unit file
-left_chain_input_file = os.path.join(main_folder_path, 'structure', 'alpha_chitin', 'charmm36', 'B_configuration', 'left-unit.pdb')
-right_chain_input_file = os.path.join(main_folder_path, 'structure', 'alpha_chitin', 'charmm36', 'B_configuration', 'right-unit.pdb')
-l_u = mda.Universe(left_chain_input_file)
-r_u = mda.Universe(right_chain_input_file)
+unit_chain_input_file = os.path.join(main_folder_path, 'structure', 'beta_chitin', 'charmm36', 'unit-neutron.pdb')
 
+unit_u = mda.Universe(unit_chain_input_file)
 
- #left_chain assembly    
-# ------------------------------------------------   
-left_chain = []
-for l_i in range(1, c_iterations + 1):
-    l_u.atoms.positions += [0, 0, c_trans]
-    resid_1 = (c_iterations - l_i + 1) * 2 - 1
-    resid_2 = (c_iterations - l_i + 1) * 2
-    for j, atom in enumerate(l_u.atoms):
+pKa=6.3                        #pka of chitosan  ref:doi.org/10.1016/j.foodhyd.2022.108383
+m_GlcNAc = 204.20              # GlcNAc unit mass
+m_Glc = 179.17                 # Glc unit mass
+ #chain assembly    
+ #------------------------------------------------------------------------------
+unit_chain = []
+for unit_i in range(1, c_iterations + 1):
+    unit_u.atoms.positions -= [0, 0, c_trans]
+    resid_1 = unit_i  * 2 - 1
+    resid_2 = unit_i  * 2
+    for j, atom in enumerate(unit_u.atoms):
         if j < 27:
             atom.residue.resid = resid_1
         else:
             atom.residue.resid = resid_2
-    left_chain_output = f"l-{l_i}.pdb"
-    left_chain.append(left_chain_output)
-    with mda.Writer(left_chain_output, n_atoms=l_u.atoms.n_atoms) as W:
-        W.write(l_u.atoms)
-with open("left-chain_temp.pdb", "w") as l_chain:
-    for l_chain_output in reversed(left_chain):
-        with open(l_chain_output, "r") as lef_chain_pdb_file:
-            for left_chain_line in lef_chain_pdb_file:
-                if left_chain_line.startswith("ATOM"):
-                    l_chain.write(left_chain_line)
-            os.remove(l_chain_output)
+    unit_chain_output = f"unit-{unit_i}.pdb"
+    unit_chain.append(unit_chain_output)
+    with mda.Writer(unit_chain_output, n_atoms=unit_u.atoms.n_atoms) as W:
+        W.write(unit_u.atoms)
+with open("unit-chain_temp.pdb", "w") as chain:
+    for unit_chain_output in unit_chain:
+         with open(unit_chain_output, "r") as unit_chain_pdb_file:
+            for unit_chain_line in unit_chain_pdb_file:
+                if unit_chain_line.startswith("ATOM"):
+                    chain.write(unit_chain_line)
+            os.remove(unit_chain_output)
 
-left_temp = "left-chain_temp.pdb"
-left_temp_u=mda.Universe(left_temp)
 
-for atom in left_temp_u.atoms:
+unit_start_segid=a_iterations
+unit_combined = "unit-chain_temp.pdb"
+unit_combined_temp = mda.Universe(unit_combined)
+for atom in unit_combined_temp.atoms:
     atom.segment.segid = '0'  
-left_temp_u.atoms.write("left-chain_temp.2.pdb")
+    elements = [atom.name[0] for atom in unit_combined_temp.atoms]
+    unit_combined_temp.add_TopologyAttr(Elements(elements))
+unit_combined_temp.atoms.write("unit-chain_temp.2.pdb")
 #------------------------------------------------------------------------------
 
 
-
-
- #right_chain assembly    
- # ------------------------------------------------   
-right_chain = []
-right_side_start_segid=a_iterations
-for r_i in range(1, c_iterations + 1):
-    r_u.atoms.positions += [0, 0, c_trans]
-    resid_1 = r_i * 2 - 1
-    resid_2 = r_i * 2
-    for j, atom in enumerate(r_u.atoms):
-        if j < 27:
-            atom.residue.resid = resid_1
-        else:
-            atom.residue.resid = resid_2
-    right_chain_output = f"r-{r_i}.pdb"
-    right_chain.append(right_chain_output)
-    with mda.Writer(right_chain_output, n_atoms=r_u.atoms.n_atoms) as W:
-        W.write(r_u.atoms)
-with open("right-chain_temp.pdb", "w") as chain_file:
-    for r_chain_output in right_chain:
-        with open(r_chain_output, "r") as right_chain_pdb_file:
-            for line in right_chain_pdb_file:
-                if line.startswith("ATOM"):
-                    chain_file.write(line)
-        os.remove(r_chain_output)
-
-
-right_side_start_segid=a_iterations
-right_temp = "right-chain_temp.pdb"
-
-right_temp_u=mda.Universe(right_temp)
-
-for atom in right_temp_u.atoms:
-    atom.segment.segid = f'{right_side_start_segid}'  
-right_temp_u.atoms.write("right-chain_temp.2.pdb")
-
-#------------------------------------------------------------------------------
-
-
- #left_layer assembly  
-left_layer_input_file = "left-chain_temp.2.pdb"
-layer_l_u = mda.Universe(left_layer_input_file)
-left_layer = []  
+ #layer assembly 
+unit_layer_input_file = "unit-chain_temp.2.pdb"
+layer_unit_u = mda.Universe(unit_layer_input_file)
+unit_layer = []  
 for i in range(1, a_iterations + 1):
-    layer_l_u.atoms.positions += [a_trans, 0, 0]
+    layer_unit_u.atoms.positions += [a_trans, 0, 0]
 
     segid_increment_value = 1 
-    for atom in layer_l_u.atoms:
+    for atom in layer_unit_u.atoms:
         numeric_part = atom.segid.replace('','')
         new_numeric_part = int(numeric_part) + segid_increment_value
     new_segid = f"{new_numeric_part}"
     atom.segment.segid = new_segid
 
-    left_layer_output = f"left_layer_{i}.pdb"
-    left_layer.append(left_layer_output)
-    with mda.Writer(left_layer_output, n_atoms=layer_l_u.atoms.n_atoms) as W:
-        W.write(layer_l_u.atoms)
-with open("left-layer_temp.pdb", "w") as layer_file:
-    for left_layer_output in left_layer:
-        with open(left_layer_output, "r") as left_layer_pdb_file:
-            for left_layer_line in left_layer_pdb_file:
-                if left_layer_line.startswith("ATOM"):
-                    layer_file.write(left_layer_line)
-            os.remove(left_layer_output) 
+    unit_layer_output = f"unit_layer_{i}.pdb"
+    unit_layer.append(unit_layer_output)
+    with mda.Writer(unit_layer_output, n_atoms=layer_unit_u.atoms.n_atoms) as W:
+        W.write(layer_unit_u.atoms)
+with open("unit-layer_temp.pdb", "w") as layer_file:
+    for unit_layer_output in unit_layer:
+        with open(unit_layer_output, "r") as unit_layer_pdb_file:
+            for unit_layer_line in unit_layer_pdb_file:
+                if unit_layer_line.startswith("ATOM"):
+                    layer_file.write(unit_layer_line)
+            os.remove(unit_layer_output) 
+ 
 
 
- #right_layer assembly    
-right_layer_input_file = "right-chain_temp.2.pdb"
-layer_r_u = mda.Universe(right_layer_input_file)
-right_layer = []  
-for i in range(1, a_iterations + 1):
-    layer_r_u .atoms.positions += [a_trans, 0, 0]
-    #j=i+a_iterations
-    segid_increment_value = 1
-    for atom in layer_r_u.atoms:
-        numeric_part = atom.segid.replace('','')
-        new_numeric_part = int(numeric_part) + segid_increment_value
-    new_segid = f"{new_numeric_part}"
-    atom.segment.segid = new_segid
-
-
-    right_layer_output = f"right_layer_{i}.pdb"
-    right_layer.append(right_layer_output)
-    with mda.Writer(right_layer_output, n_atoms=layer_r_u .atoms.n_atoms) as W:
-        W.write(layer_r_u .atoms)
-with open("right-layer_temp.pdb", "w") as layer_file:
-    for right_layer_output in right_layer:
-        with open(right_layer_output, "r") as right_layer_pdb_file:
-            for right_layer_line in right_layer_pdb_file:
-                if right_layer_line.startswith("ATOM"):
-                    layer_file.write(right_layer_line)
-            os.remove(right_layer_output) 
-
-
- #unit_structure assembly  
-left_layer_input_file = "left-layer_temp.pdb"
-right_layer_input_file = "right-layer_temp.pdb"
 unit_output_file = "unit.pdb" 
 with open(unit_output_file, "w") as unit_file:
-    with open("left-layer_temp.pdb", "r") as left_file:
-        for line in left_file:
+    with open("unit-layer_temp.pdb", "r") as assembled_file:
+        for line in assembled_file:
             if line.startswith("ATOM"):
                 unit_file.write(line)
-    with open("right-layer_temp.pdb", "r") as right_file:
-        for line in right_file:
-            if line.startswith("ATOM"):
-                unit_file.write(line)
+
 
 unit_input_file="unit.pdb"
 crystal_structure = mda.Universe(unit_input_file)
 crystal_structure_files = [] 
 
+
+angle_rad = (gamma_angle - 90) * math.pi / 180
+cosA = math.cos(angle_rad)
+sinA = math.sin(angle_rad)
+
 for crystal_i in range(1, b_iterations + 1):
-    crystal_structure.atoms.positions += [0, -b_trans, 0]
+    crystal_structure.atoms.positions += [-b_trans * sinA, b_trans * cosA , 0]
     crystal_structure_output = f"crystal_{crystal_i}.pdb"
     crystal_structure_files.append(crystal_structure_output)
     with mda.Writer(crystal_structure_output, n_atoms=crystal_structure.atoms.n_atoms) as writer:
@@ -229,7 +155,7 @@ for crystal_i in range(1, b_iterations + 1):
 
 for file_index, file_name in enumerate(crystal_structure_files):
     temp_structure = mda.Universe(file_name)
-    segid_increment_value = file_index * 2 * a_iterations
+    segid_increment_value = file_index  * a_iterations
     for segment in temp_structure.segments:
         matches = re.findall(r'\d+', segment.segid)
         if matches:
@@ -240,7 +166,7 @@ for file_index, file_name in enumerate(crystal_structure_files):
                 atom.segment.segid = new_segid
     with mda.Writer(file_name, n_atoms=temp_structure.atoms.n_atoms) as writer:
         writer.write(temp_structure.atoms)
-with open("alpha-chitin-A-temp.pdb", "w") as combined_file:
+with open("unit_temp.pdb", "w") as combined_file:
     for file_name in crystal_structure_files:
         with open(file_name, "r") as file:
             for line in file:
@@ -250,8 +176,8 @@ with open("alpha-chitin-A-temp.pdb", "w") as combined_file:
 
 os.remove(unit_input_file) 
 
-
 #-------------------------------------------------- native chitin built ----------------------------------------------
+
 
 
 
@@ -261,11 +187,11 @@ os.remove(unit_input_file)
 
 ###########NH2 located step
 
-chain_u = mda.Universe("alpha-chitin-A-temp.pdb")
+chain_u = mda.Universe("unit_temp.pdb")
 residue_ids = [residue.resid for residue in chain_u.residues]
 #resid_ids = [residue.resid for residue in chain_u.resid]
 total_residues=len(residue_ids)
-origin_nacetyl_chains = molecule.load("pdb", "alpha-chitin-A-temp.pdb")
+origin_nacetyl_chains = molecule.load("pdb", "unit_temp.pdb")
 native_all_atoms = atomsel('all', molid=origin_nacetyl_chains)
 residue_ids = native_all_atoms.residue
 #min_resid = min(residue_ids, default=None)
@@ -285,8 +211,8 @@ def calculate_dda(x):
 
 def adjust_for_amination_limit(closest_x):
     closest_x
-    if closest_x > 2 * c_iterations * ((a_iterations-2) * (2*b_iterations-2)):
-        new_amination_number = 2 * c_iterations * ((a_iterations-2) * (2*b_iterations-2)) ######limitation to the all possible selected resiudes for inside deacetylation
+    if closest_x > 2 * c_iterations * ((a_iterations-2) * (b_iterations-2)):
+        new_amination_number = 2 * c_iterations * ((a_iterations-2) * (b_iterations-2)) ######limitation to the all possible selected resiudes for inside deacetylation
         closest_x = new_amination_number
     return closest_x ##Glc number is closes_x
 
@@ -307,85 +233,39 @@ if DDA_target == 0:
     closest_x = total_residues
 aminiation_number = closest_x
 
-left_fragment, right_fragment = [], []
+modified_fragment = []
 
-for j in range(1, 2 * b_iterations - 1):
+for j in range(1, b_iterations - 1):
     start_fragment = j * a_iterations + 1
     end_fragment   = start_fragment + a_iterations - 2   # inclusive end
-
-    if end_fragment >= start_fragment:  # guard against empty ranges
-        if j % 2 == 0:   # left
-            left_fragment.extend(range(start_fragment, end_fragment))   # include end
-        else:            # right
-            right_fragment.extend(range(start_fragment, end_fragment))  # include end
-
-###aminiation number
-#modified_num_per_chain = aminiation_number / (2 * a_iterations)
-if  aminiation_number > 0:
-     
-    #print(f"Actual DDA is : {actual_dda}")
-    #print(f"aminiation_number: {aminiation_number}")
-    #print(f"aminiation_number_per_chain: {modified_num_per_chain}")
+    modified_fragment.extend(range(start_fragment, end_fragment))   # include end
     
-    #print(actual_dda_rounded)
-    ##select the range
+if  aminiation_number > 0:
 
-    left_residue_count=0
-    right_residue_count=0
+    modified_residue_count=aminiation_number
+    modified_fragment_count=len(modified_fragment)
+    max_modified_residue_count = 2 * c_iterations * modified_fragment_count
+    modified_residue_count_update=modified_residue_count
 
-    for i in range(1, aminiation_number + 1):
-        if i % 2 == 0:
-            left_residue_count += 1
-        elif i % 2 == 1:
-            right_residue_count += 1
+    if modified_residue_count > max_modified_residue_count:
+       modified_residue_count_update = max_modified_residue_count    
 
-
-    left_fragment_count=len(left_fragment)
-    right_fragment_count=len(right_fragment)
-    max_left_residue_count = 2 * c_iterations * left_fragment_count
-    max_right_residue_count = 2*  c_iterations * right_fragment_count
-
-    left_residue_count_update=left_residue_count
-    right_residue_count_update=right_residue_count
-
-    if left_residue_count > max_left_residue_count:
-       left_residue_count_update = max_left_residue_count    
-
-    if right_residue_count > max_right_residue_count:
-       right_residue_count_update = max_right_residue_count
-
-    new_aminiation_number_update=left_residue_count_update + right_residue_count_update 
+    new_aminiation_number_update=modified_residue_count_update
     actual_dda=(new_aminiation_number_update*179.17)/(new_aminiation_number_update*179.17 + (total_residues-new_aminiation_number_update)*204.20)
     actual_dda_rounded=round(actual_dda,5)
 
-    numbers = [x for x in range(1, 2 * c_iterations + 1)]
-    
-    all_combinations_left = [(value1, value2) for value1 in left_fragment  for value2 in numbers ]
-    all_combinations_right = [(value1, value2) for value1 in right_fragment  for value2 in numbers ]
+    numbers = [x for x in range(1, 2 * c_iterations + 1)]   
+    all_combinations = [(value1, value2) for value1 in modified_fragment  for value2 in numbers ]
 
-    
-    #print(len(all_combinations_010_left))
-    random.shuffle(all_combinations_left)
-    random.shuffle(all_combinations_right)
-    sel_left_array = []
-    sel_right_array = []
-    
-    while len(sel_left_array) < left_residue_count_update:
-        if not all_combinations_left:  
+    random.shuffle(all_combinations)
+    sel_modified_residue_array = []
+
+    while len(sel_modified_residue_array) < modified_residue_count_update:
+        if not all_combinations:  
             raise ValueError("Ran out of unique combinations before reaching the desired count.")
-        selected_combination_left = random.choice(all_combinations_left)
-        sel_left_array.append(selected_combination_left)
-        all_combinations_left.remove(selected_combination_left)
-
-    while len(sel_right_array) < right_residue_count_update:
-        if not all_combinations_right:  # Check if the list is empty to avoid IndexError
-            raise ValueError("Ran out of unique combinations before reaching the desired count.")
-        selected_combination_right = random.choice(all_combinations_right)
-        sel_right_array.append(selected_combination_right)
-        all_combinations_right.remove(selected_combination_right)
-
-
-
+        selected_modified_resiude = random.choice(all_combinations)
+        sel_modified_residue_array.append(selected_modified_resiude)
+        all_combinations.remove(selected_modified_resiude)
 
     def get_fragment_indices(mol_id, sel):
         min_max_chain_indices = []
@@ -401,10 +281,10 @@ if  aminiation_number > 0:
                 min_max_chain_indices.append((None, None))
         return min_max_chain_indices
     
-    origin_nacetyl_chains = molecule.load("pdb", "alpha-chitin-A-temp.pdb")
-    left_nacetyl_candidates_indices   = get_fragment_indices(origin_nacetyl_chains, sel_left_array)   
-    right_nacetyl_candidates_indices  = get_fragment_indices(origin_nacetyl_chains, sel_right_array)   
-    molecule.delete(origin_nacetyl_chains) 
+    origin_nacetyl_chains = molecule.load("pdb", "unit_temp.pdb")
+    nacetyl_candidates_indices   = get_fragment_indices(origin_nacetyl_chains, sel_modified_residue_array)   
+    molecule.delete(origin_nacetyl_chains)  
+
 
     def remove_atoms_based_on_indices(universe, index_ranges):
         all_removed_indices = []
@@ -421,9 +301,7 @@ if  aminiation_number > 0:
     
         return universe
     
-    
-    
-    all_indices = [left_nacetyl_candidates_indices, right_nacetyl_candidates_indices]
+    all_indices = [nacetyl_candidates_indices]
     ###chain_u is the unmodified structure, with name of "alpha-chitin.temp.pdb"
     nacetyl_remove_universe = remove_atoms_based_on_indices(chain_u, all_indices)
     nacetyl_remove_universe.atoms.write("nacetyl_remove.temp.pdb")
@@ -440,9 +318,7 @@ if  aminiation_number > 0:
             raise ValueError("Multiple unique fragments found in selection")
     
     nacetyl_remove_chains = molecule.load("pdb", "nacetyl_remove.temp.pdb")
-    left_nh2_candidates_indices   = get_fragment_indices(nacetyl_remove_chains, sel_left_array)   
-    right_nh2_candidates_indices  = get_fragment_indices(nacetyl_remove_chains, sel_right_array)   
-
+    nh2_candidates_indices   = get_fragment_indices(nacetyl_remove_chains, sel_modified_residue_array)   
 
     nacetyl_remove_chains_u = mda.Universe("nacetyl_remove.temp.pdb")
     nh2_atoms = list(nacetyl_remove_chains_u.atoms)
@@ -466,26 +342,15 @@ if  aminiation_number > 0:
                     nh2_new_positions = {} 
                     #print(residues_num)
                     # Define new positions based on residue ID's odd/even status
-                    if residue.resid % 2 == 1  and fragment_number in left_fragment: # Odd residue ID
+                    if residue.resid % 2 == 1  and fragment_number in modified_fragment: # Odd residue ID
                         nh2_new_positions = {
-                            'HN21': base_atom.position + np.array([ 0.942, -0.324, 0.092]),
-                            'HN22': base_atom.position + np.array([-0.762, -0.622, 0.177]),
+                            'HN21': base_atom.position + np.array([ 0.829,	0.537,	0.158]),
+                            'HN22': base_atom.position + np.array([-0.899,	0.420,	0.124]),
                         }
-                    elif residue.resid % 2 == 0  and fragment_number in left_fragment:  # Odd residue ID
+                    elif residue.resid % 2 == 0  and fragment_number in modified_fragment:  # Odd residue ID
                         nh2_new_positions = {
-                            'HN21': base_atom.position + np.array([ 0.762,  0.622,  0.177]),
-                            'HN22': base_atom.position + np.array([-0.942,  0.324,  0.092]),
-                        }
-    
-                    elif residue.resid % 2 == 1  and fragment_number in right_fragment: # Odd residue ID
-                        nh2_new_positions = {
-                            'HN21': base_atom.position + np.array([ 0.762, -0.622, -0.177]),
-                            'HN22': base_atom.position + np.array([-0.942, -0.324, -0.092]),
-                        }
-                    elif residue.resid % 2 == 0  and fragment_number in right_fragment:  # Odd residue ID
-                        nh2_new_positions = {
-                            'HN21': base_atom.position + np.array([ 0.942,  0.324, -0.092]),
-                            'HN22': base_atom.position + np.array([-0.762,  0.622, -0.177]),
+                            'HN21': base_atom.position + np.array([ 0.899,	-0.420,	0.124]),
+                            'HN22': base_atom.position + np.array([-0.829,	-0.537, 0.158]),
                         }
                     residue.atoms[7].name = 'N2'
                     insert_pos = nh2_atoms.index(base_atom) + 1
@@ -496,7 +361,7 @@ if  aminiation_number > 0:
                         nh2_new_uni.add_TopologyAttr('resname', [base_atom.resname])
                         nh2_new_uni.add_TopologyAttr('resid', [residue.resid])
                         nh2_new_uni.add_TopologyAttr('segid', [base_atom.segment.segid])
-                        nh2_new_uni.add_TopologyAttr('chainIDs', ['N'])
+                        nh2_new_uni.add_TopologyAttr('chainIDs', ['X'])
                         nh2_new_uni.atoms.positions = [pos]
                         nh2_new_atom = nh2_new_uni.atoms[0]
     
@@ -507,7 +372,7 @@ if  aminiation_number > 0:
         return new_universe
     
     
-    all_indices = [left_nh2_candidates_indices, right_nh2_candidates_indices]
+    all_indices = [nh2_candidates_indices]
     nh2_u = add_nh2_based_on_indices(nacetyl_remove_chains_u, all_indices)
     nh2_u.atoms.write("nh2-modified.temp.pdb")
     molecule.delete(nacetyl_remove_chains)
@@ -523,12 +388,11 @@ if  aminiation_number > 0:
     u_final.dimensions = [box_x, box_y, box_z, 90, 90, 90]
     translation_vector = center_of_box - center_of_mass
     u_final.atoms.translate(translation_vector)
-    with mda.Writer(f"charmm36-alpha-chitin-B-icm.pdb", n_atoms=u_final.atoms.n_atoms, reindex=True, ) as W:
+    with mda.Writer(f"charmm36-beta-chitin-icm.pdb", n_atoms=u_final.atoms.n_atoms, reindex=True, ) as W:
         W.write(u_final.atoms)    
     for temp_file in glob.glob("*temp*.pdb"):
         os.remove(temp_file)
-    
-    #print("Generated alpha-chitin-A fcm model with surface modification.")
+
     print(f"DDA: {actual_dda_rounded:.4f}, Units: {new_aminiation_number_update}")
 
     #selected_numbers_length = len(selected_numbers)
@@ -537,7 +401,7 @@ if  aminiation_number > 0:
 
 
 elif aminiation_number == 0:
-    u_final = mda.Universe("alpha-chitin-A-temp.pdb")
+    u_final = mda.Universe("unit_temp.pdb")
     box_x = a_iterations * a_trans
     box_y = b_iterations * b_trans
     box_z = c_iterations * c_trans
@@ -546,7 +410,7 @@ elif aminiation_number == 0:
     u_final.dimensions = [box_x, box_y, box_z, 90, 90, 90]
     translation_vector = center_of_box - center_of_mass
     u_final.atoms.translate(translation_vector)
-    with mda.Writer(f"charmm36-alpha-chitin-B-icm.pdb", n_atoms=u_final.atoms.n_atoms, reindex=True, ) as W:
+    with mda.Writer(f"charmm36-beta-chitin-icm.pdb", n_atoms=u_final.atoms.n_atoms, reindex=True, ) as W:
         W.write(u_final.atoms)
     
     # Remove temporary files

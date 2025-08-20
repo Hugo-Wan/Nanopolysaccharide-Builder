@@ -65,7 +65,7 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 main_folder_path = config['main_folder_path']
 # Construct the path to the unit file
-left_chain_input_file = os.path.join(main_folder_path, 'structure', 'alpha_chitin', 'charmm36',  'AB_configuration', 'left-unit.pdb')
+left_chain_input_file = os.path.join(main_folder_path, 'structure', 'alpha_chitin', 'charmm36', 'AB_configuration', 'left-unit.pdb')
 right_chain_input_file = os.path.join(main_folder_path, 'structure', 'alpha_chitin', 'charmm36', 'AB_configuration', 'right-unit.pdb')
 l_u = mda.Universe(left_chain_input_file)
 r_u = mda.Universe(right_chain_input_file)
@@ -309,6 +309,7 @@ os.remove(unit_input_file)
 
 
 
+
 #------------------------------------------------- nh2 modified step -------------------------------------------------------
 
 
@@ -331,21 +332,10 @@ molecule.delete(origin_nacetyl_chains)
 
 
 
-#selected_atoms = chain_u.select_atoms(f"resid 1")
-#print(f"Number of atoms in the selected residue range: {len(selected_atoms)}")
-
-#print("Left Modified Chains:", left_modified_chains)
-#print("Right Modified Chains:", right_modified_chains)
-
-
-###NHx group evenly assigned to each chain
-##define the dda; how many resiudes should be modified:
 def calculate_dda(x):
     numerator = (x) * m_Glc
     denominator = numerator + (total_residues - x) * m_GlcNAc
     return numerator / denominator if denominator != 0 else 0
-
-
 
 def adjust_for_amination_limit(closest_x):
     closest_x
@@ -364,200 +354,225 @@ for x in range(total_residues + 1):
 #print(f"closet_x number is {closest_x}")
 
 closest_x = adjust_for_amination_limit(closest_x)
-print(f"total residues number is {total_residues}")
+#print(f"total residues number is {total_residues}")
 #print(f"closet_x number is {closest_x}")
 
 if DDA_target == 0:
     closest_x = total_residues
 aminiation_number = closest_x
 
+left_fragment, right_fragment = [], []
+
+for j in range(1, 2 * b_iterations - 1):
+    start_fragment = j * a_iterations + 1
+    end_fragment   = start_fragment + a_iterations - 2   # inclusive end
+
+    if end_fragment >= start_fragment:  # guard against empty ranges
+        if j % 2 == 0:   # left
+            left_fragment.extend(range(start_fragment, end_fragment))   # include end
+        else:            # right
+            right_fragment.extend(range(start_fragment, end_fragment))  # include end
+
 ###aminiation number
 #modified_num_per_chain = aminiation_number / (2 * a_iterations)
-if  closest_x > 0:
-    actual_dda=(aminiation_number*179.17)/(aminiation_number*179.17 + (total_residues-aminiation_number)*204.20)
+if  aminiation_number > 0:
+     
     #print(f"Actual DDA is : {actual_dda}")
     #print(f"aminiation_number: {aminiation_number}")
     #print(f"aminiation_number_per_chain: {modified_num_per_chain}")
-    actual_dda_rounded=round(actual_dda,5)
+    
     #print(actual_dda_rounded)
     ##select the range
 
-    #store the inside part of the structures
-    selected_aminiation_residue_ranges = [] 
-    all_possible_residue_numbers = []
+    left_residue_count=0
+    right_residue_count=0
 
-    left_ranges = []
-    right_ranges = []
+    for i in range(1, aminiation_number + 1):
+        if i % 2 == 0:
+            left_residue_count += 1
+        elif i % 2 == 1:
+            right_residue_count += 1
 
-    left_possible_residue_numbers = []  # For even-specific ranges
-    right_possible_residue_numbers = []   # For odd-specific ranges
 
+    left_fragment_count=len(left_fragment)
+    right_fragment_count=len(right_fragment)
+    max_left_residue_count = 2 * c_iterations * left_fragment_count
+    max_right_residue_count = 2*  c_iterations * right_fragment_count
 
-    for j in range(1, 2 * b_iterations-1):
-        k=j+1
-        start_residue = j*a_iterations*2*c_iterations + 2*c_iterations
-        end_residue = k*a_iterations*2*c_iterations -1 - 2*c_iterations  ##c_iteration*2 representing the number of residue for one single chitin strand
+    left_residue_count_update=left_residue_count
+    right_residue_count_update=right_residue_count
+
+    if left_residue_count > max_left_residue_count:
+       left_residue_count_update = max_left_residue_count    
+
+    if right_residue_count > max_right_residue_count:
+       right_residue_count_update = max_right_residue_count
+
+    new_aminiation_number_update=left_residue_count_update + right_residue_count_update 
+    actual_dda=(new_aminiation_number_update*179.17)/(new_aminiation_number_update*179.17 + (total_residues-new_aminiation_number_update)*204.20)
+    actual_dda_rounded=round(actual_dda,5)
+
+    numbers = [x for x in range(1, 2 * c_iterations + 1)]
     
-        selected_aminiation_residue_ranges.append((start_residue, end_residue))
-        #print(f"Start at {start_residue} and ends at {end_residue}")
-        all_possible_residue_numbers.extend(range(start_residue, end_residue+1))
+    all_combinations_left = [(value1, value2) for value1 in left_fragment  for value2 in numbers ]
+    all_combinations_right = [(value1, value2) for value1 in right_fragment  for value2 in numbers ]
 
-        if j % 2 == 0:  # left
-            left_start_residue = start_residue  # Adjust this as necessary
-            left_end_residue = end_residue  # Adjust this as necessary
-            left_ranges.append((left_start_residue, left_end_residue))
-            left_possible_residue_numbers.extend(range(left_start_residue, left_end_residue + 1))
-            #print(left_possible_residue_numbers)
-        else:  # right
-            right_start_residue = start_residue  # Adjust this as necessary
-            right_end_residue = end_residue  # Adjust this as necessary
-            right_ranges.append((right_start_residue, right_end_residue))
-            right_possible_residue_numbers.extend(range(right_start_residue, right_end_residue + 1))
-            
-
-    #print(f"All possible resiude number is {len(all_possible_residue_numbers)}")
-    #print(f"left resiude number is {len(left_possible_residue_numbers)}")
-    #print(f"right possible resiude number is {len(right_possible_residue_numbers)}")
-    # Print the available ranges
-    #print("Selected ranges:", selected_aminiation_residue_ranges)
     
+    #print(len(all_combinations_010_left))
+    random.shuffle(all_combinations_left)
+    random.shuffle(all_combinations_right)
+    sel_left_array = []
+    sel_right_array = []
+    
+    while len(sel_left_array) < left_residue_count_update:
+        if not all_combinations_left:  
+            raise ValueError("Ran out of unique combinations before reaching the desired count.")
+        selected_combination_left = random.choice(all_combinations_left)
+        sel_left_array.append(selected_combination_left)
+        all_combinations_left.remove(selected_combination_left)
 
-    def get_residue_indices(mol_id, modified_residue_number):
-        modified_residues_indices = []
-        # Select atoms belonging to the specified fragment number
-        residue_selection = atomsel(f"residue {modified_residue_number}", molid=mol_id)
-        indices = residue_selection.index
-        modified_residues_indices.extend(indices)
-        return modified_residues_indices
-  # 
-    def n_acetyl_collect_removal_candidates(universe, start_idx, end_idx, modified_residues):
-        n_acetyl_candidates_to_remove = []
-        residue_selector = f"resid {modified_residues} and (bynum {start_idx}:{end_idx})"
-        residues = universe.select_atoms(residue_selector).residues
-        
-        for residue in residues:
-            if residue.resid == 1:
-                n_acetyl_candidates_to_remove.extend(residue.atoms[10:17].indices)  
+    while len(sel_right_array) < right_residue_count_update:
+        if not all_combinations_right:  # Check if the list is empty to avoid IndexError
+            raise ValueError("Ran out of unique combinations before reaching the desired count.")
+        selected_combination_right = random.choice(all_combinations_right)
+        sel_right_array.append(selected_combination_right)
+        all_combinations_right.remove(selected_combination_right)
+
+
+
+
+    def get_fragment_indices(mol_id, sel):
+        min_max_chain_indices = []
+        for fragment_number, resid in sel:
+            selection_query = f"fragment {fragment_number} and resid {resid}"
+            selection = atomsel(selection_query, molid=mol_id)
+            indices = selection.index
+            if indices:
+                min_index = min(indices)
+                max_index = max(indices)
+                min_max_chain_indices.append((min_index, max_index))
             else:
-                n_acetyl_candidates_to_remove.extend(residue.atoms[8:15].indices) 
-        return n_acetyl_candidates_to_remove    
+                min_max_chain_indices.append((None, None))
+        return min_max_chain_indices
     
+    origin_nacetyl_chains = molecule.load("pdb", "alpha-chitin-A-temp.pdb")
+    left_nacetyl_candidates_indices   = get_fragment_indices(origin_nacetyl_chains, sel_left_array)   
+    right_nacetyl_candidates_indices  = get_fragment_indices(origin_nacetyl_chains, sel_right_array)   
+    molecule.delete(origin_nacetyl_chains) 
 
-    def apply_N_acetyl_removals(universe, candidates_to_remove):
-        """Remove the collected candidate atoms from the universe and create a new modified universe."""
-        all_indices = set(range(len(universe.atoms)))
-        remaining_indices = all_indices - set(candidates_to_remove)
-        remaining_atoms = universe.atoms[list(remaining_indices)]
-        no_nacetyl = mda.Merge(remaining_atoms)
-        return no_nacetyl
-  # 
+    def remove_atoms_based_on_indices(universe, index_ranges):
+        all_removed_indices = []
+    
+        for index_range in index_ranges:
+            for start_idx, end_idx in index_range:
+                atom_group = universe.atoms[start_idx:end_idx + 1]
+                for residue in atom_group.residues:
+                    if residue.resid == 1:
+                        indices_to_remove = residue.atoms[10:17].indices
+                    else:
+                        indices_to_remove = residue.atoms[8:15].indices
+                    all_removed_indices.extend(indices_to_remove)
+        unique_indices = sorted(set(all_removed_indices))
+        indices_str = ' '.join(map(str, unique_indices))
+        universe = universe.select_atoms(f"not index {indices_str}")
+    
+        return universe
+    
+    all_indices = [left_nacetyl_candidates_indices, right_nacetyl_candidates_indices]
+    ###chain_u is the unmodified structure, with name of "alpha-chitin.temp.pdb"
+    nacetyl_remove_universe = remove_atoms_based_on_indices(chain_u, all_indices)
+    nacetyl_remove_universe.atoms.write("nacetyl_remove.temp.pdb")
+        
 
-    # Selecting numbers randomly without repetition
-    selected_numbers = []
-    current_structure_name='alpha-chitin-A-temp.pdb'
-    modified_loop_structure='alpha-chitin-A-temp-0.pdb'
-    os.rename(current_structure_name, modified_loop_structure)
-  # 
-    try:#print(f"aminiation number is {aminiation_number}")
-        for m in range(min(aminiation_number, len(all_possible_residue_numbers))):
-            #print(f"Building structure step {m}")
-            if all_possible_residue_numbers:  # Ensure the list is not empty
-                random_residue_number = random.choice(all_possible_residue_numbers)
-                
-                origin_nacetyl_chains = molecule.load("pdb", modified_loop_structure)
-                selected_modified_indices=get_residue_indices(origin_nacetyl_chains, random_residue_number)
-                selected_modified_ndx_i = selected_modified_indices[0]
-                selected_modified_ndx_j = selected_modified_indices[-1]
-                molecule.delete(origin_nacetyl_chains)
-                #selected_modified_atoms=chain_u.select_atoms(f"index {selected_modified_ndx_i} : {selected_modified_ndx_j}")
-                #n-acetyl-removed steps
-                original_chitin_crystal=mda.Universe(modified_loop_structure) 
-                atom_i = original_chitin_crystal.atoms[selected_modified_ndx_i] 
-                atom_j = original_chitin_crystal.atoms[selected_modified_ndx_j]
-                modified_unit_reisd=atom_i.resid
-                #print(modified_unit_reisd)
-                selected_nacetyl_candidates = n_acetyl_collect_removal_candidates(original_chitin_crystal, selected_modified_ndx_i, selected_modified_ndx_j, modified_unit_reisd)  
-                modified_universe = apply_N_acetyl_removals(original_chitin_crystal, selected_nacetyl_candidates)
-                modified_universe.atoms.write(f"modified-alpha-chitin-temp-{m}.pdb")
+    def get_fragment(mol_id, indices_i, indices_j):
+        selection_query = f"index {indices_i} to {indices_j}"
+        selection = atomsel(selection_query, molid=mol_id)
+        fragment_num_indice = selection.fragment
+        unique_fragments = set(fragment_num_indice)
+        if len(unique_fragments) == 1:
+                return unique_fragments.pop()   
+        else:
+            raise ValueError("Multiple unique fragments found in selection")
     
-    
-                ##located whether this structure is left or right with nacetyls groups
-                ##NH2 adding steps
-                removal_nacetyl_resiudes = molecule.load("pdb", f"modified-alpha-chitin-temp-{m}.pdb")
-                selected_removal_indices = get_residue_indices(removal_nacetyl_resiudes, random_residue_number)
-                selected_removal_ndx_i = selected_removal_indices[0]
-                selected_removal_ndx_j = selected_removal_indices[-1]
-                molecule.delete(removal_nacetyl_resiudes)
-                nacetyl_removal_residue_u = mda.Universe(f"modified-alpha-chitin-temp-{m}.pdb")
-                nacetyl_removal_residue_atoms = list(nacetyl_removal_residue_u.atoms)
-                nacetyl_removal_residue = nacetyl_removal_residue_u.select_atoms(f"index {selected_removal_ndx_i}:{selected_removal_ndx_j}").residues
-                    # Process each selected residue
-                for sel in nacetyl_removal_residue:
-                    sel.resname = 'BLND' 
-                    base_atom_index = 9 if sel .resid == 1 else 7
-                    base_atom = sel .atoms[base_atom_index]
-                    base_atom.name = 'N2'   
+    nacetyl_remove_chains = molecule.load("pdb", "nacetyl_remove.temp.pdb")
+    left_nh2_candidates_indices   = get_fragment_indices(nacetyl_remove_chains, sel_left_array)   
+    right_nh2_candidates_indices  = get_fragment_indices(nacetyl_remove_chains, sel_right_array)   
+
+
+    nacetyl_remove_chains_u = mda.Universe("nacetyl_remove.temp.pdb")
+    nh2_atoms = list(nacetyl_remove_chains_u.atoms)
+
+
+    def add_nh2_based_on_indices(universe, indices_lists):
+        all_new_atoms = []  # This will store all newly created atoms across all modifications
+        for index_ranges in indices_lists:
+            for start_idx, end_idx in index_ranges:
+                residues = universe.select_atoms(f"index {start_idx}:{end_idx}").residues
+                fragment_number = get_fragment(nacetyl_remove_chains, start_idx, end_idx)
+
+                #print(residues_num_1)
+                #print("staring from to the end:",start_idx, end_idx)
+                #print("fragment number is :", fragment_number )
+                #print("residue is : ", residues)
+                for residue in residues:
+                    residue.resname = 'BLND'
+                    base_atom_index = 9 if residue.resid == 1 else 7
+                    base_atom = residue.atoms[base_atom_index]
+                    nh2_new_positions = {} 
+                    #print(residues_num)
                     # Define new positions based on residue ID's odd/even status
-                    if random_residue_number in left_possible_residue_numbers and sel .resid % 2 == 1:  # Odd residue ID
+                    if residue.resid % 2 == 1  and fragment_number in left_fragment: # Odd residue ID
                         nh2_new_positions = {
                             'HN21': base_atom.position + np.array([ 0.942, -0.324, 0.092]),
                             'HN22': base_atom.position + np.array([-0.762, -0.622, 0.177]),
                         }
-                    elif random_residue_number in left_possible_residue_numbers and sel .resid % 2 == 0:   
+                    elif residue.resid % 2 == 0  and fragment_number in left_fragment:  # Odd residue ID
                         nh2_new_positions = {
                             'HN21': base_atom.position + np.array([ 0.762,  0.622,  0.177]),
                             'HN22': base_atom.position + np.array([-0.942,  0.324,  0.092]),
                         }
-                    if random_residue_number in right_possible_residue_numbers and sel .resid % 2 == 1:  # Odd residue ID
+    
+                    elif residue.resid % 2 == 1  and fragment_number in right_fragment: # Odd residue ID
                         nh2_new_positions = {
                             'HN21': base_atom.position + np.array([ 0.762, -0.622, -0.177]),
                             'HN22': base_atom.position + np.array([-0.942, -0.324, -0.092]),
                         }
-                    elif random_residue_number in right_possible_residue_numbers and sel .resid % 2 == 0:   
+                    elif residue.resid % 2 == 0  and fragment_number in right_fragment:  # Odd residue ID
                         nh2_new_positions = {
                             'HN21': base_atom.position + np.array([ 0.942,  0.324, -0.092]),
                             'HN22': base_atom.position + np.array([-0.762,  0.622, -0.177]),
                         }
-                    # Insert new atoms
-                    insert_pos = nacetyl_removal_residue_atoms.index(base_atom) + 1
+                    residue.atoms[7].name = 'N2'
+                    insert_pos = nh2_atoms.index(base_atom) + 1
                     for name, pos in nh2_new_positions.items():
                         nh2_new_uni = mda.Universe.empty(n_atoms=1, trajectory=True)
                         nh2_new_uni.add_TopologyAttr('name', [name])
                         nh2_new_uni.add_TopologyAttr('type', [base_atom.type])
                         nh2_new_uni.add_TopologyAttr('resname', [base_atom.resname])
-                        nh2_new_uni.add_TopologyAttr('resid', [sel.resid])
+                        nh2_new_uni.add_TopologyAttr('resid', [residue.resid])
                         nh2_new_uni.add_TopologyAttr('segid', [base_atom.segment.segid])
                         nh2_new_uni.add_TopologyAttr('chainIDs', ['N'])
                         nh2_new_uni.atoms.positions = [pos]
-                        left_nh3_new_atom = nh2_new_uni.atoms[0]
-            
-                        # Insert the new atom at the calculated position
-                        nacetyl_removal_residue_atoms.insert(insert_pos, left_nh3_new_atom)
+                        nh2_new_atom = nh2_new_uni.atoms[0]
+    
+                        nh2_atoms.insert(insert_pos, nh2_new_atom)
                         insert_pos += 1  # Update position for the next atom
-                
-                # Create a new universe with all atoms including the added ones
-                nh2_new_universe = mda.Merge(*[mda.AtomGroup([atom]) for atom in nacetyl_removal_residue_atoms])
+        # Create a new universe with all atoms including the added ones
+        new_universe = mda.Merge(*[mda.AtomGroup([atom]) for atom in nh2_atoms])
+        return new_universe
     
-                new_round=m+1 #for the loop update and also for the last round , which is for the final structure
-                nh2_new_universe.atoms.write(f"alpha-chitin-A-temp-{new_round}.pdb")
-                modified_loop_structure=f'alpha-chitin-A-temp-{new_round}.pdb'
     
-                ###avoid repeated to modify the same residue
-                all_possible_residue_numbers.remove(random_residue_number)  # Remove the selected number to prevent re-selection
-                selected_numbers.append(random_residue_number)
-            else:
-                print("No valid numbers to choose from or all numbers have been selected.")
-            #print(f"Randomly selected number: {random_residue_number}")
-    except KeyboardInterrupt:
-        print("Loop interrupted by user (Ctrl+C). Exiting...")
+    all_indices = [left_nh2_candidates_indices, right_nh2_candidates_indices]
+    nh2_u = add_nh2_based_on_indices(nacetyl_remove_chains_u, all_indices)
+    nh2_u.atoms.write("nh2-modified.temp.pdb")
+    molecule.delete(nacetyl_remove_chains)
 
 
-    ###final round number is m
-    final_loop_number=new_round
-    u_final = mda.Universe(f"alpha-chitin-A-temp-{new_round}.pdb")
-    box_x = a_iterations * a_trans + 20
-    box_y = b_iterations * b_trans + 20
-    box_z = c_iterations * c_trans + 20
+
+    u_final = mda.Universe(f"nh2-modified.temp.pdb")
+    box_x = a_iterations * a_trans+30
+    box_y = b_iterations * b_trans+30
+    box_z = c_iterations * c_trans+30
     center_of_mass = u_final.atoms.center_of_mass()
     center_of_box = [box_x / 2, box_y / 2, box_z / 2]
     u_final.dimensions = [box_x, box_y, box_z, 90, 90, 90]
@@ -569,7 +584,7 @@ if  closest_x > 0:
         os.remove(temp_file)
     
     #print("Generated alpha-chitin-A fcm model with surface modification.")
-    print(f"DDA: {actual_dda_rounded:.4f}, Units: {min(aminiation_number, len(all_possible_residue_numbers))}")
+    print(f"DDA: {actual_dda_rounded:.4f}, Units: {new_aminiation_number_update}")
 
     #selected_numbers_length = len(selected_numbers)
     #print("Total selected numbers:", selected_numbers_length)
@@ -578,9 +593,9 @@ if  closest_x > 0:
 
 elif aminiation_number == 0:
     u_final = mda.Universe("alpha-chitin-A-temp.pdb")
-    box_x = a_iterations * a_trans + 20
-    box_y = b_iterations * b_trans + 20
-    box_z = c_iterations * c_trans + 20
+    box_x = a_iterations * a_trans+30
+    box_y = b_iterations * b_trans+30
+    box_z = c_iterations * c_trans+30
     center_of_mass = u_final.atoms.center_of_mass()
     center_of_box = [box_x / 2, box_y / 2, box_z / 2]
     u_final.dimensions = [box_x, box_y, box_z, 90, 90, 90]
@@ -588,12 +603,6 @@ elif aminiation_number == 0:
     u_final.atoms.translate(translation_vector)
     with mda.Writer(f"charmm36-alpha-chitin-AB-fcm.pdb", n_atoms=u_final.atoms.n_atoms, reindex=True, ) as W:
         W.write(u_final.atoms)
-    
-    #complete_structure=mda.Universe("u_final-temp.pdb")
-    #for atom in complete_structure.atoms:
-    #    elements = [atom.name[0] for atom in complete_structure.atoms]
-    #    complete_structure.add_TopologyAttr(Elements(elements)) 
-    #complete_structure.atoms.write("charmm36-alpha-chitin-A-fcm.pdb")
     
     # Remove temporary files
     for temp_file in glob.glob("*temp*.pdb"):

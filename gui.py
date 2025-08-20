@@ -13299,6 +13299,8 @@ class ModelViewer(QMainWindow):
 
         self.AlphaA_deacetyl_planeLabel.setVisible(False)
         self.AlphaA_deacetyl_planeComboBox.setVisible(False)
+        self.AlphaA_carboxylation_planeLabel.setVisible(False)
+        self.AlphaA_carboxylation_planeComboBox.setVisible(False)
 
         self.AlphaA_dda_Label.setVisible(False)
         self.AlphaA_dda_LineEdit.setVisible(False)
@@ -13781,7 +13783,7 @@ class ModelViewer(QMainWindow):
                         if AlphaA_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
                             AlphaA_script_name = "alpha_chitin-modified-inside-infinite.py" if "Infinite" in AlphaA_ForceFieldType else "alpha_chitin-modified-inside-finite.py"
                             AlphaA_shape_name = "rectangle"
-                            AlphaA_folder_name = "charmm36"
+                            #AlphaA_folder_name = "charmm36"
                         elif AlphaA_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
                             QMessageBox.warning(self, "Unsupported Operation", "Currently, deacetylated chitin doesn't support Glycam06 Force Field.")                           
                         #elif AlphaA_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
@@ -13789,7 +13791,7 @@ class ModelViewer(QMainWindow):
                         #    AlphaA_shape_name = "rectangle"
                         #    AlphaA_folder_name = "glycam06"
                         try:    
-                            AlphaA_script_path = os.path.join(AlphaA_base_dir, "function", "alpha-chitin-A-deacetylation", AlphaA_shape_name, AlphaA_folder_name, AlphaA_script_name)
+                            AlphaA_script_path = os.path.join(AlphaA_base_dir, "function", "alpha-chitin-A-deacetylation", AlphaA_shape_name, AlphaA_script_name)
                             AlphaA_command = ["python", AlphaA_script_path, AlphaA_a_unit, AlphaA_b_unit, AlphaA_c_unit, dda]
                             AlphaA_result = subprocess.run(AlphaA_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                             if AlphaA_result.returncode == 0:
@@ -16414,6 +16416,9 @@ class ModelViewer(QMainWindow):
 
         self.AlphaB_deacetyl_planeLabel.setVisible(False)
         self.AlphaB_deacetyl_planeComboBox.setVisible(False)
+        self.AlphaB_carboxylation_planeLabel.setVisible(False)
+        self.AlphaB_carboxylation_planeComboBox.setVisible(False)
+
 
         self.AlphaB_dda_Label.setVisible(False)
         self.AlphaB_dda_LineEdit.setVisible(False)
@@ -16899,7 +16904,7 @@ class ModelViewer(QMainWindow):
                         if AlphaB_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
                             AlphaB_script_name = "alpha_chitin-modified-inside-infinite.py" if "Infinite" in AlphaB_ForceFieldType else "alpha_chitin-modified-inside-finite.py"
                             AlphaB_shape_name = "rectangle"
-                            AlphaB_folder_name = "charmm36"
+                            #AlphaB_folder_name = "charmm36"
                         elif AlphaB_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
                             QMessageBox.warning(self, "Unsupported Operation", "Currently, deacetylated chitin doesn't support Glycam06 Force Field.")
                         #elif AlphaB_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
@@ -16907,7 +16912,7 @@ class ModelViewer(QMainWindow):
                         #    AlphaB_shape_name = "rectangle"
                         #    AlphaB_folder_name = "glycam06"
                         try:    
-                            AlphaB_script_path = os.path.join(AlphaB_base_dir, "function", "alpha-chitin-B-deacetylation", AlphaB_shape_name, AlphaB_folder_name, AlphaB_script_name)
+                            AlphaB_script_path = os.path.join(AlphaB_base_dir, "function", "alpha-chitin-B-deacetylation", AlphaB_shape_name, AlphaB_script_name)
                             AlphaB_command = ["python", AlphaB_script_path, AlphaB_a_unit, AlphaB_b_unit, AlphaB_c_unit, dda]
                             AlphaB_result = subprocess.run(AlphaB_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                             if AlphaB_result.returncode == 0:
@@ -19529,6 +19534,8 @@ class ModelViewer(QMainWindow):
 
         self.AlphaAB_deacetyl_planeLabel.setVisible(False)
         self.AlphaAB_deacetyl_planeComboBox.setVisible(False)
+        self.AlphaAB_carboxylation_planeLabel.setVisible(False)
+        self.AlphaAB_carboxylation_planeComboBox.setVisible(False)
 
         self.AlphaAB_dda_Label.setVisible(False)
         self.AlphaAB_dda_LineEdit.setVisible(False)
@@ -20007,7 +20014,7 @@ class ModelViewer(QMainWindow):
                         if AlphaAB_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
                             AlphaAB_script_name = "alpha_chitin-modified-inside-infinite.py" if "Infinite" in AlphaAB_ForceFieldType else "alpha_chitin-modified-inside-finite.py"
                             AlphaAB_shape_name = "rectangle"
-                            AlphaAB_folder_name = "charmm36"
+                            #AlphaAB_folder_name = "charmm36"
                         elif AlphaAB_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
                             QMessageBox.warning(self, "Unsupported Operation", "Currently, deacetylated chitin doesn't support Glycam06 Force Field.")
                            #elif AlphaAB_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
@@ -20015,7 +20022,7 @@ class ModelViewer(QMainWindow):
                            #    AlphaAB_shape_name = "rectangle"
                            #    AlphaAB_folder_name = "glycam06"  
                         try: 
-                            AlphaAB_script_path = os.path.join(AlphaAB_base_dir, "function", "alpha-chitin-AB-deacetylation", AlphaAB_shape_name, AlphaAB_folder_name, AlphaAB_script_name)     
+                            AlphaAB_script_path = os.path.join(AlphaAB_base_dir, "function", "alpha-chitin-AB-deacetylation", AlphaAB_shape_name, AlphaAB_script_name)     
                             AlphaAB_command = ["python", AlphaAB_script_path, AlphaAB_a_unit, AlphaAB_b_unit, AlphaAB_c_unit, dda]
                             AlphaAB_result = subprocess.run(AlphaAB_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                             if AlphaAB_result.returncode == 0:
@@ -22707,6 +22714,9 @@ class ModelViewer(QMainWindow):
 
         self.betachitin_deacetyl_planeLabel.setVisible(False)
         self.betachitin_deacetyl_planeComboBox.setVisible(False)
+        self.betachitin_carboxylation_planeLabel.setVisible(False)
+        self.betachitin_carboxylation_planeComboBox.setVisible(False)
+
 
         self.betachitin_dda_Label.setVisible(False)
         self.betachitin_dda_LineEdit.setVisible(False)
@@ -23130,6 +23140,43 @@ class ModelViewer(QMainWindow):
                                     betachitin_output = betachitin_result.stdout.strip()
                                     self.betachitin_exp_rectangle_deacetylation_Popup(betachitin_output)
                                     self.betachitin_exp_rectangle_deacetylation_Topology()                    
+                                else:
+                                    error_message = betachitin_result.stderr.strip()
+                                    QMessageBox.critical(self, "β-chitin Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.critical(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
+                        elif betachitin_deacetylation_plane_selection == "Inside the β-chitin":
+                            ##deacetylation parameter 
+                            betachitin_a_unit = self.betachitin_aRepeatUnits.text()
+                            betachitin_b_unit = self.betachitin_bRepeatUnits.text()
+                            betachitin_c_unit = self.betachitin_cRepeatUnits.text()
+                            dda = self.betachitin_dda_LineEdit.text()  
+                            betachitin_ForceFieldType = self.betachitin_ForceFieldTypeselector.currentText()
+    
+                            if not betachitin_c_unit and betachitin_a_unit and betachitin_b_unit and dda and ph and betachitin_ForceFieldType:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all required repeated unit value and deacetylation parameters.")
+                                return
+                            
+                            betachitin_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if betachitin_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                betachitin_script_name = "beta_chitin-modified-inside-infinite.py" if "Infinite" in betachitin_ForceFieldType else "beta_chitin-modified-inside-finite.py"
+                                betachitin_shape_name = "rectangle"
+                                #elif betachitin_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                #    betachitin_script_name = "alpha_chitin_A_infinite_experiment.py" if "Infinite" in betachitin_ForceFieldType else "alpha_chitin_A_finite_experiment.py"
+                                #    betachitin_shape_name = "rectangle"
+                                #    betachitin_folder_name = "glycam06"
+                            elif betachitin_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, deacetylated chitin doesn't support Glycam06 Force Field.")
+                            try:    
+                                betachitin_script_path = os.path.join(betachitin_base_dir, "function", "beta-chitin-deacetylation", betachitin_shape_name,  betachitin_script_name)
+                                betachitin_command = ["python", betachitin_script_path, betachitin_a_unit, betachitin_b_unit, betachitin_c_unit, dda]
+                                betachitin_result = subprocess.run(betachitin_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if betachitin_result.returncode == 0:
+                                    betachitin_output = betachitin_result.stdout.strip()
+                                    self.betachitin_exp_rectangle_deacetylation_inside_Popup(betachitin_output)
+                                    self.betachitin_exp_rectangle_deacetylation_inside_Topology()                    
                                 else:
                                     error_message = betachitin_result.stderr.strip()
                                     QMessageBox.critical(self, "β-chitin Parameter Error", error_message)  
@@ -24203,6 +24250,50 @@ class ModelViewer(QMainWindow):
                                     QMessageBox.critical(self, "β-chitin Parameter Error", error_message)  
                             except Exception as e:
                                 QMessageBox.critical(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+                        
+                        ###user-defined deacetylation-inside beta-chitin
+                        elif betachitin_deacetylation_plane_selection == "Inside the β-chitin":
+                            ##deacetylation parameter 
+                            betachitin_a_parm = self.betachitin_aParam.text()
+                            betachitin_b_parm = self.betachitin_bParam.text()
+                            betachitin_c_parm = self.betachitin_cParam.text()
+                            betachitin_gamma_parm = self.betachitin_gammaParam.text()
+                            betachitin_a_unit = self.betachitin_aRepeatUnits.text()
+                            betachitin_b_unit = self.betachitin_bRepeatUnits.text()
+                            betachitin_c_unit = self.betachitin_cRepeatUnits.text()
+                            dda = self.betachitin_dda_LineEdit.text()  
+                            betachitin_ForceFieldType = self.betachitin_ForceFieldTypeselector.currentText()
+    
+                            if not betachitin_c_unit and betachitin_a_unit and betachitin_b_unit and dda and ph and betachitin_ForceFieldType:
+                                QMessageBox.warning(self, "Input Error", "Please fill in all required repeated unit value and deacetylation parameters.")
+                                return
+                            
+                            betachitin_base_dir = os.path.dirname(os.path.abspath(__file__))
+                            if betachitin_ForceFieldType in ["CHARMM36 Infinite Chain Model", "CHARMM36 Finite Chain Model"]:
+                                betachitin_script_name = "beta_chitin-modified-inside-infinite.py" if "Infinite" in betachitin_ForceFieldType else "beta_chitin-modified-inside-finite.py"
+                                betachitin_ud_folder = "user-defined"
+                                betachitin_shape_name = "rectangle"
+                                #elif betachitin_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                #    betachitin_script_name = "alpha_chitin_A_infinite_experiment.py" if "Infinite" in betachitin_ForceFieldType else "alpha_chitin_A_finite_experiment.py"
+                                #    betachitin_shape_name = "rectangle"
+                                #    betachitin_folder_name = "glycam06"
+                            elif betachitin_ForceFieldType in ["GLYCAM06 Infinite Chain Model", "GLYCAM06 Finite Chain Model"]:
+                                QMessageBox.warning(self, "Unsupported Operation", "Currently, deacetylated chitin doesn't support Glycam06 Force Field.")
+                            try:    
+                                betachitin_script_path = os.path.join(betachitin_base_dir, "function", "beta-chitin-deacetylation", betachitin_ud_folder, betachitin_shape_name,  betachitin_script_name)
+                                betachitin_command = ["python", betachitin_script_path, betachitin_a_parm, betachitin_b_parm, betachitin_c_parm,betachitin_gamma_parm, betachitin_a_unit, betachitin_b_unit, betachitin_c_unit, dda]
+                                betachitin_result = subprocess.run(betachitin_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                if betachitin_result.returncode == 0:
+                                    betachitin_output = betachitin_result.stdout.strip()
+                                    self.betachitin_exp_rectangle_deacetylation_inside_Popup(betachitin_output)
+                                    self.betachitin_exp_rectangle_deacetylation_inside_Topology()                    
+                                else:
+                                    error_message = betachitin_result.stderr.strip()
+                                    QMessageBox.critical(self, "β-chitin Parameter Error", error_message)  
+                            except Exception as e:
+                                QMessageBox.critical(self, "Execution Failed", f"Failed to execute the script, please provide all required parameters.")
+
+
 
                 ### beta-chitin---------user-defined-------rectangle-------------- carboxylation-----------
                     elif self.betachitin_carboxylationRadio.isChecked():
@@ -25308,6 +25399,44 @@ class ModelViewer(QMainWindow):
         betachitin_ForceFieldType = self.betachitin_ForceFieldTypeselector.currentText()
         file_name = "glycam06" if "GLYCAM06" in betachitin_ForceFieldType else "CHARMM36"
         message = f"{file_name} Topology File for Carboxylated β-chitin Generated Successfully."
+        QMessageBox.information(self, "Topology Build Result", message)
+
+##beta rectangle deacetylation ---inside ----- windows output
+    def betachitin_exp_rectangle_deacetylation_inside_Topology(self):  #native chitin topology
+        betachitin_ForceFieldType = self.betachitin_ForceFieldTypeselector.currentText()
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        script_name = "beta-chitin_icm_topgen.py" if "Infinite" in betachitin_ForceFieldType else "beta-chitin_fcm_topgen.py"
+        folder_name_i = "glycam06" if "GLYCAM06" in betachitin_ForceFieldType else "charmm36"
+        folder_name_j = "beta-chitin"
+        folder_name_k = "rectangle"
+        script_path = os.path.join(base_dir, "topology", folder_name_i, folder_name_j, folder_name_k, script_name)
+        try:
+            command = ["python", script_path]
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            if result.returncode == 0:
+                self.betachitin_exp_rectangle_deacetylation_inside_Topology_Popup()
+            else:
+                QMessageBox.warning(self, "Deacetylated β-chitin Topology Generation Failed")
+        except Exception as e:
+            QMessageBox.critical(self, "Deacetylated β-chitin Topology Generation Failed")
+
+    def betachitin_exp_rectangle_deacetylation_inside_Popup(self, betachitin_rectangle_output):
+        lines = [line.strip() for line in betachitin_rectangle_output.strip().split('\n') if line.strip()]
+        if not lines:
+            QMessageBox.warning(self, "Build Error", "No output received.")
+            return
+    
+        last_line = lines[-1]
+        parts = last_line.split(',')
+        dda = parts[0].split(':')[1].strip()
+        units = parts[1].split(':')[1].strip()
+        message = f"Deacetylated β-chitin was Generated Successfully!\nActual DDA: {dda}\nDeacetylation units: {units}"
+        QMessageBox.information(self, "Build Result", message)
+
+    def betachitin_exp_rectangle_deacetylation_inside_Topology_Popup(self):
+        betachitin_ForceFieldType = self.betachitin_ForceFieldTypeselector.currentText()
+        file_name = "glycam06" if "GLYCAM06" in betachitin_ForceFieldType else "CHARMM36"
+        message = f"{file_name} Topology File for Deacetylation β-chitin Generated Successfully."
         QMessageBox.information(self, "Topology Build Result", message)
 
 
