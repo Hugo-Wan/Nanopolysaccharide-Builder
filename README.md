@@ -102,18 +102,48 @@ A detailed user manual is available:
 - ⬇️ [**Download PDF**](https://github.com/Hugo-Wan/Nanopolysaccharide-Builder/raw/main/manual.pdf)
 
 ## 📚 Citation
-If you use the NPB package to construct atomistic structures in your studies, please cite:
-“Nanopolysaccharide Builder: A User-Friendly Tool for Atomistic Models of Polysaccharide-Based Nanostructures.”
 
-For building cellulose allomorphs using experimental crystallographic parameters, please cite:
-Cellulose Iα: J. Am. Chem. Soc. 2003, 125 (47), 14300–14306.
-Cellulose Iβ: J. Am. Chem. Soc. 2002, 124 (31), 9074–9082.
-Cellulose II: Biomacromolecules 2001, 2 (2), 410–416.
+If you use **NPB** in your research, please cite our paper:
 
-For building chitin allomorphs using experimental crystallographic parameters, please cite:
-α-Chitin: Biomacromolecules 2009, 10 (5), 1100–1105.
-β-Chitin (anhydrous): Macromolecules 2011, 44 (4), 950–957.
-β-Chitin (dihydrate): PLoS ONE 2012, 7 (6), e39376.
+- **Wan, Z.; et al.** *Nanopolysaccharide Builder: A User-Friendly Tool for Atomistic Models of Polysaccharide-Based Nanostructures.*  
+  *J. Chem. Inf. Model.* (2025).  
+  DOI: [10.1021/acs.jcim.5c01204](https://pubs.acs.org/doi/10.1021/acs.jcim.5c01204)
+
+---
+
+## 🔬 References for Experimental Crystal Parameters
+
+When building **cellulose** or **chitin** allomorphs using experimental crystallographic parameters, please also cite the following:
+
+### Cellulose Allomorphs
+1. **Cellulose Iα**  
+   Nishiyama, Y.; et al. *J. Am. Chem. Soc.* **2003**, 125 (47), 14300–14306.  
+   [https://doi.org/10.1021/ja037055w](https://doi.org/10.1021/ja037055w)
+
+2. **Cellulose Iβ**  
+   Nishiyama, Y.; et al. *J. Am. Chem. Soc.* **2002**, 124 (31), 9074–9082.  
+   [https://doi.org/10.1021/ja0257319](https://doi.org/10.1021/ja0257319)
+
+3. **Cellulose II**  
+   Langan, P.; et al. *Biomacromolecules* **2001**, 2 (2), 410–416.  
+   [https://doi.org/10.1021/bm005612q](https://doi.org/10.1021/bm005612q)
+
+---
+
+### Chitin Allomorphs
+4. **α-Chitin**  
+   Sikorski, P.; et al. *Biomacromolecules* **2009**, 10 (5), 1100–1105.  
+   [https://doi.org/10.1021/bm801251e](https://doi.org/10.1021/bm801251e)
+
+5. **β-Chitin (anhydrous)**  
+   Sawada, D.; et al. *Macromolecules* **2011**, 44 (4), 950–957.  
+   [https://doi.org/10.1021/ma102506y](https://doi.org/10.1021/ma102506y)
+
+6. **β-Chitin (dihydrate)**  
+   Minke, R.; et al. *PLoS ONE* **2012**, 7 (6), e39376.  
+   [https://doi.org/10.1371/journal.pone.0039376](https://doi.org/10.1371/journal.pone.0039376)
+
+---
 
 ## 📬 Contact
 This software is distributed under the GPLv3 License. For more information about NPB, please contact Hugo Wan (hugowan@student.ubc.ca) or Yan Yu (yuy1@ornl.gov).
