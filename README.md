@@ -136,8 +136,8 @@ When building **cellulose** or **chitin** allomorphs using experimental crystall
    [https://doi.org/10.1021/bm801251e](https://doi.org/10.1021/bm801251e)
 
 5. **β-Chitin (anhydrous)**  
-   Sawada, D.; et al. *Macromolecules* **2011**, 44 (4), 950–957.  
-   [https://doi.org/10.1021/ma102506y](https://doi.org/10.1021/ma102506y)
+   Nishiyama, Y.; et al. *Macromolecules* **2011**, 44 (4), 950–957.  
+   [https://doi.org/10.1021/ma102240r](https://doi.org/10.1021/ma102240r)
 
 6. **β-Chitin (dihydrate)**  
    Minke, R.; et al. *PLoS ONE* **2012**, 7 (6), e39376.  
