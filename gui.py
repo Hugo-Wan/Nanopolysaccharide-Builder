@@ -25498,21 +25498,21 @@ class ModelViewer(QMainWindow):
         self.beta_chitin_dihydrous_ComboBox.currentIndexChanged.connect(self.beta_chitin_dihydrous_updateImageDisplay) 
 
         ###cititation for beta chitin crystallographic parameter
-        self.beta_chitin_dihydrous_citation1Label = QLabel("Crystallographic parameter reference: Nishiyama et al. Macromolecules. 2011;44(4):950-7.")
-        self.beta_chitin_dihydrous_citation2Label = QLabel("Crystallographic parameter reference: Sawada et al. Biomacromolecules. 2012,13,288−291.")
-        self.beta_chitin_dihydrous_citation1Label.setWordWrap(True)
+        #self.beta_chitin_dihydrous_citation1Label = QLabel("Crystallographic parameter reference: Nishiyama et al. Macromolecules. 2011;44(4):950-7.")
+        self.beta_chitin_dihydrous_citation2Label = QLabel("Crystallographic parameter reference: Sawada et al. PloS one. 2012;7(6):e39376.")
+        #self.beta_chitin_dihydrous_citation1Label.setWordWrap(True) 
         self.beta_chitin_dihydrous_citation2Label.setWordWrap(True)
-        beta_chitin_dihydrous_citation_font_1 = self.beta_chitin_dihydrous_citation1Label.font()
-        beta_chitin_dihydrous_citation_font_1.setPointSize(6) 
-        self.beta_chitin_dihydrous_citation1Label.setFont(beta_chitin_dihydrous_citation_font_1)
-        beta_chitin_dihydrous_layout.addWidget(self.beta_chitin_dihydrous_citation1Label)
+        #beta_chitin_dihydrous_citation_font_1 = self.beta_chitin_dihydrous_citation1Label.font()
+        #beta_chitin_dihydrous_citation_font_1.setPointSize(6) 
+        #self.beta_chitin_dihydrous_citation1Label.setFont(beta_chitin_dihydrous_citation_font_1)
+        #beta_chitin_dihydrous_layout.addWidget(self.beta_chitin_dihydrous_citation1Label)
         beta_chitin_dihydrous_citation_font_2= self.beta_chitin_dihydrous_citation2Label.font()
         beta_chitin_dihydrous_citation_font_2.setPointSize(6) 
         self.beta_chitin_dihydrous_citation2Label.setFont(beta_chitin_dihydrous_citation_font_2)
         beta_chitin_dihydrous_layout.addWidget(self.beta_chitin_dihydrous_citation2Label)
 
         self.beta_chitin_dihydrous_citation2Label.hide()
-        self.beta_chitin_dihydrous_citation1Label.hide()
+        #self.beta_chitin_dihydrous_citation1Label.hide()
 
         # Connect combo box selection changes to update display
         self.beta_chitin_dihydrous_ComboBox.currentIndexChanged.connect(self.beta_chitin_dihydrous_updateParametersDisplay)
@@ -25612,7 +25612,7 @@ class ModelViewer(QMainWindow):
             model = self.beta_chitin_dihydrous_ComboBox.currentText()
             
             if self.beta_chitin_dihydrous_Neutron.isChecked() :
-                self.beta_chitin_dihydrous_citation1Label.show()
+                #self.beta_chitin_dihydrous_citation1Label.show()
                 self.beta_chitin_dihydrous_citation2Label.show()
                 if model == "Rectangle cross-section shape":
                     # Set up modifications section if Experimental is checked and model is one of the specified chain models
@@ -25696,7 +25696,7 @@ class ModelViewer(QMainWindow):
 
 
             elif self.beta_chitin_dihydrous_UserDefined.isChecked() :
-                self.beta_chitin_dihydrous_citation1Label.hide()
+                #self.beta_chitin_dihydrous_citation1Label.hide()
                 self.beta_chitin_dihydrous_citation2Label.hide()
                 if model == "Rectangle cross-section shape":
                     self.beta_chitin_dihydrous_setupModificationsSection(self.beta_chitin_dihydrous_parametersGroup.layout(), QFont("Arial", 13))

@@ -102,7 +102,18 @@ A detailed user manual is available:
 - ⬇️ [**Download PDF**](https://github.com/Hugo-Wan/Nanopolysaccharide-Builder/raw/main/manual.pdf)
 
 ## 📚 Citation
-The NPB paper is currently under revision.
+If you use the NPB package to construct atomistic structures in your studies, please cite:
+“Nanopolysaccharide Builder: A User-Friendly Tool for Atomistic Models of Polysaccharide-Based Nanostructures.”
+
+For building cellulose allomorphs using experimental crystallographic parameters, please cite:
+Cellulose Iα: J. Am. Chem. Soc. 2003, 125 (47), 14300–14306.
+Cellulose Iβ: J. Am. Chem. Soc. 2002, 124 (31), 9074–9082.
+Cellulose II: Biomacromolecules 2001, 2 (2), 410–416.
+
+For building chitin allomorphs using experimental crystallographic parameters, please cite:
+α-Chitin: Biomacromolecules 2009, 10 (5), 1100–1105.
+β-Chitin (anhydrous): Macromolecules 2011, 44 (4), 950–957.
+β-Chitin (dihydrate): PLoS ONE 2012, 7 (6), e39376.
 
 ## 📬 Contact
 This software is distributed under the GPLv3 License. For more information about NPB, please contact Hugo Wan (hugowan@student.ubc.ca) or Yan Yu (yuy1@ornl.gov).
