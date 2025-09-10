@@ -611,7 +611,7 @@ if carboxylation_num > 0:
 
 
 elif carboxylation_num == 0:
-    u_final = mda.Universe("alpha-chitin-A-temp.pdb")
+    u_final = mda.Universe("unit_temp.pdb")
     box_x = a_trans * a_iterations + 20
     box_y = b_iterations * b_trans + 20
     box_z = c_iterations * c_trans + 20

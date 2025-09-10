@@ -609,7 +609,7 @@ if aminiation_number > 0:
 
     
 elif aminiation_number == 0:
-    u_final = mda.Universe("unit_temp.pdbai")
+    u_final = mda.Universe("unit_temp.pdb")
     box_x = a_trans * a_iterations + 20
     box_y = b_iterations * b_trans + 20
     box_z = c_iterations * c_trans + 20
